@@ -1,9 +1,3 @@
-<!-- This is where we set up our database. We will use this file to connect to our database. 
- 
-    We will also use this file to all other files here in this project as a global database connection.
-
-    -->
-
 <?php
 /**
  * Database Connection Page
