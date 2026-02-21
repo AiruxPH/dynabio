@@ -30,7 +30,7 @@ function sendEmail($to, $subject, $body, $altBody = '')
 
     try {
         // Server settings
-        $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+        $mail->SMTPDebug = SMTP::DEBUG_OFF; // Set to DEBUG_SERVER for troubleshooting
         $mail->isSMTP();
         $mail->Host = MAIL_HOST;
         $mail->SMTPAuth = true;
@@ -40,7 +40,12 @@ function sendEmail($to, $subject, $body, $altBody = '')
         $mail->Port = MAIL_PORT;
         $mail->CharSet = 'UTF-8';
 
-        // Bypass SSL verification (Useful for local environments with SSL issues)
+        /**
+         * Bypass SSL verification
+         * 
+         * IMPORTANT: This is a workaround for local XAMPP environments with SSL certificate issues.
+         * You may want to remove this block once the site is live if the server has proper certificates.
+         */
         $mail->SMTPOptions = array(
             'ssl' => array(
                 'verify_peer' => false,
