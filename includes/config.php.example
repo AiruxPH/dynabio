@@ -15,3 +15,11 @@ define('DB_NAME', 'your_db_name');
 define('DB_USER', 'your_user');
 define('DB_PASS', 'your_password');
 define('DB_CHARSET', 'utf8mb4');
+
+// Email (Gmail SMTP) Settings
+define('MAIL_HOST', 'smtp.gmail.com');
+define('MAIL_PORT', 587);
+define('MAIL_USER', 'your-email@gmail.com');
+define('MAIL_PASS', 'your-app-password');
+define('MAIL_FROM', 'your-email@gmail.com');
+define('MAIL_FROM_NAME', 'Dynabio');
