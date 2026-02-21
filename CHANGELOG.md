@@ -15,6 +15,8 @@ All notable changes to this project will be documented in this file.
     - Unified login System featuring cross-checked database expirations, remember-me token generation, and real-time frontend responses.
     - Specialized logic handling >24 hour code regeneration alongside secure >7 days unverified deletion protocols.
     - Dedicated code verification and standard "forgot password" routing.
+- `index.php` as a secure dashboard homepage displaying user information and photo handling.
+- `auth/logout.php` script for terminating secure sessions.
 
 ### Changed
 - Strengthened security in `includes/db.php` by:
