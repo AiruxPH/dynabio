@@ -8,6 +8,10 @@
 - the user will input their password
 - the user will confirm their password
 - if the passwords match, the user will be registered and will be redirected to the login page
+- a premade username will be generated based on the user's email(preferably the first name)
+- the user will be asked to confirm the username, or the user can customize their own username
+- the user will be asked to confirm their username
+- if the username is confirmed, the user will be redirected to the login page
 
 ### NOTE:
 - only one account can be created per email
@@ -20,12 +24,12 @@
 
 
 ### login:
-- the user will input their email and password
+- the user will input their username/email and password
+- if the user's email is verified, the user will be logged in
 - the user can choose if they want to remember their login
-- if the user is verified, the user will be logged in
-- if the user is not verified, the user will be asked to verify their email
-- if the user is not verified for more than 24 hours, they will be asked to sign up again
-- if the user is not verified for more than 7 days, their account will be deleted
+- if the user's email is not verified, the user will be asked to verify their email
+- if the user's email is not verified for more than 24 hours, they will be asked to sign up again
+- if the user's email is not verified for more than 7 days, their account will be deleted
 - in case if the user disconnected in the middle of the login process, they will be asked to login again
 
 ### forget password:
