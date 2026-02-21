@@ -1,0 +1,68 @@
+<?php
+session_start();
+header('Content-Type: application/json');
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth_utils.php';
+
+$data = json_decode(file_get_contents('php://input'), true);
+$email = $data['email'] ?? '';
+$password = $data['password'] ?? '';
+$remember = $data['remember'] ?? false;
+
+if (empty($email) || empty($password)) {
+    jsonResponse(false, 'Email and password are required.');
+}
+
+try {
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$user) {
+        jsonResponse(false, 'Invalid email or password.');
+    }
+
+    // Check verification status and expiration rules
+    if ($user['is_verified'] == 0) {
+        // "if the user is not verified for more than 7 days, their account will be deleted"
+        $deleted = performAccountExpirationChecks($conn, $user);
+        if ($deleted) {
+            jsonResponse(false, 'Your unverified account expired after 7 days and was deleted. Please sign up again.', 'signup.php');
+        }
+
+        // "if the user is not verified for more than 24 hours, they will be asked to sign up again" (New code sent)
+        if (isCodeExpired($user['date_registered'])) {
+            $code = generateVerificationCode();
+            $update = $conn->prepare("UPDATE users SET verification_code = ?, date_registered = NOW() WHERE user_id = ?");
+            $update->execute([$code, $user['user_id']]);
+            sendVerificationEmail($email, $code, 'signup');
+
+            jsonResponse(false, 'Verification expired safely. A new code was sent to your email. Redirecting...', 'verify.php?email=' . urlencode($email));
+        }
+
+        // < 24 hours, just not verified yet
+        jsonResponse(false, 'Your account is not verified. Please check your email. Redirecting...', 'verify.php?email=' . urlencode($email));
+    }
+
+    // Account is verified, check password
+    if (!password_verify($password, $user['password'])) {
+        jsonResponse(false, 'Invalid email or password.');
+    }
+
+    // Login successful
+    $_SESSION['user_id'] = $user['user_id'];
+    $_SESSION['email'] = $user['email'];
+    $_SESSION['role'] = $user['role'];
+
+    // If remember me is checked, extend the session cookie lifetime
+    if ($remember) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), session_id(), time() + (86400 * 30), $params["path"], $params["domain"], $params["secure"], $params["httponly"]); // 30 days
+    }
+
+    jsonResponse(true, 'Login successful!', '../index.php');
+
+} catch (Exception $e) {
+    jsonResponse(false, 'Database error occurred: ' . $e->getMessage());
+}
+?>

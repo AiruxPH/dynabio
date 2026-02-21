@@ -11,6 +11,10 @@ All notable changes to this project will be documented in this file.
 - `includes/PHPMailer/` library for email sending (manual installation).
 - `includes/mail_helper.php` for centralized and easy email sending.
 - `test_mail.php` as a utility to verify email functionality.
+- Comprehensive `auth/` directory containing the full authentication system:
+    - Unified login System featuring cross-checked database expirations, remember-me token generation, and real-time frontend responses.
+    - Specialized logic handling >24 hour code regeneration alongside secure >7 days unverified deletion protocols.
+    - Dedicated code verification and standard "forgot password" routing.
 
 ### Changed
 - Strengthened security in `includes/db.php` by:
