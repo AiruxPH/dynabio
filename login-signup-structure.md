@@ -1,4 +1,6 @@
-sign up:
+# DESCLAIMER: There is no separate page for admin login or even the ability to sign up as an admin. The login page is unified for both users and admins.
+
+### sign up:
 - the user will input their email
 - the system will generate a 16 alphanumerical verification code and send it to the user's email
 - the user will input the verification code
@@ -7,7 +9,7 @@ sign up:
 - the user will confirm their password
 - if the passwords match, the user will be registered and will be redirected to the login page
 
-NOTE:
+### NOTE:
 - only one account can be created per email
 - the user will not be able to login until they have verified their email
 - in case if the user has not verified their email, they will be redirected to the login page and will be asked to verify their email
@@ -17,7 +19,7 @@ NOTE:
 
 
 
-login:
+### login:
 - the user will input their email and password
 - the user can choose if they want to remember their login
 - if the user is verified, the user will be logged in
@@ -26,7 +28,7 @@ login:
 - if the user is not verified for more than 7 days, their account will be deleted
 - in case if the user disconnected in the middle of the login process, they will be asked to login again
 
-forget password:
+### forget password:
 - the user will input their email
 - the system will generate a 16 alphanumerical verification code and send it to the user's email
 - the user will input the verification code
@@ -35,4 +37,4 @@ forget password:
 - the user will confirm their new password
 - if the new passwords match, the user will be logged in
 
-NOTE: since the forget password page is either at the login page or in the profile page, to prevent anyone from directly opening or accessing the forget password page, the user will be redirected to the login page
+### NOTE: since the forget password page is either at the login page or in the profile page, to prevent anyone from directly opening or accessing the forget password page, the user will be redirected to the login page
