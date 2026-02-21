@@ -1,0 +1,17 @@
+<?php
+/**
+ * Database configuration template
+ * 
+ * Copy this file to config.php and fill in your actual credentials.
+ */
+
+// Prevent direct access to this file
+if (basename($_SERVER['PHP_SELF']) == basename(__FILE__)) {
+    die('Direct access not permitted');
+}
+
+define('DB_HOST', 'your_host');
+define('DB_NAME', 'your_db_name');
+define('DB_USER', 'your_user');
+define('DB_PASS', 'your_password');
+define('DB_CHARSET', 'utf8mb4');
