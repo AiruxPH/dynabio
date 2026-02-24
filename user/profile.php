@@ -133,36 +133,31 @@ if (!$user) {
         </div>
 
         <form id="profileForm">
-            <?php
-            // Define fields that should never be shown in the form
-            $system_fields = ['user_id', 'password', 'is_verified', 'verification_code', 'code_expires_at', 'created_at', 'photo', 'is_archived'];
-            // Define fields that are visible but strictly read-only
-            $readonly_fields = ['email', 'role', 'oauth_provider'];
+            <div class="form-group" style="position: relative;">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" class="form-control"
+                    value="<?php echo htmlspecialchars($user['username']); ?>" 
+                    data-original="<?php echo htmlspecialchars($user['username']); ?>" required>
+                <span id="usernameWarning"
+                    style="font-size: 0.8rem; color: #94a3b8; display: block; margin-top: 0.25rem; min-height: 1rem;"></span>
+            </div>
 
-            // Loop through dynamic database columns
-            foreach ($user as $key => $value):
-                if (in_array($key, $system_fields))
-                    continue;
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <!-- Email is usually readonly or requires a complex flow to change -->
+                <input type="email" id="email" name="email" class="form-control"
+                    value="<?php echo htmlspecialchars($user['email']); ?>" 
+                    data-original="<?php echo htmlspecialchars($user['email']); ?>" readonly
+                    style="background: rgba(255,255,255,0.02); color: #94a3b8; cursor: not-allowed;">
+            </div>
 
-                // Format "first_name" to "First Name"
-                $label = ucwords(str_replace('_', ' ', $key));
-                $is_readonly = in_array($key, $readonly_fields) ? 'readonly' : '';
-                $style = $is_readonly ? 'background: rgba(255,255,255,0.02); color: #94a3b8; cursor: not-allowed;' : '';
-                ?>
-                <div class="form-group" style="position: relative;">
-                    <label for="<?php echo htmlspecialchars($key); ?>"><?php echo htmlspecialchars($label); ?></label>
-                    <input type="text" id="<?php echo htmlspecialchars($key); ?>"
-                        name="<?php echo htmlspecialchars($key); ?>" class="form-control"
-                        value="<?php echo htmlspecialchars($value); ?>"
-                        data-original="<?php echo htmlspecialchars($value); ?>" <?php echo $is_readonly; ?>
-                        style="<?php echo $style; ?>" <?php echo ($key === 'username') ? 'required' : ''; ?>>
-
-                    <?php if ($key === 'username'): ?>
-                        <span id="usernameWarning"
-                            style="font-size: 0.8rem; color: #94a3b8; display: block; margin-top: 0.25rem; min-height: 1rem;"></span>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach; ?>
+            <div class="form-group">
+                <label for="role">Account Role</label>
+                <input type="text" id="role" name="role" class="form-control"
+                    value="<?php echo ucfirst(htmlspecialchars($user['role'])); ?>" 
+                    data-original="<?php echo ucfirst(htmlspecialchars($user['role'])); ?>" readonly
+                    style="background: rgba(255,255,255,0.02); color: #94a3b8; cursor: not-allowed; text-transform: capitalize;">
+            </div>
 
             <!-- View Actions -->
             <div id="viewActions" class="action-buttons" style="flex-direction: column;">
