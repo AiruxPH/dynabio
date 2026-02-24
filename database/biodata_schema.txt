@@ -1,0 +1,23 @@
+-- SQL Schema to create the Biodata table for the Dynamic Biography system.
+-- Execute this query manually in your SQL Management Tool (like phpMyAdmin) on the dynabio database.
+
+CREATE TABLE `biodata` (
+  `user_id` INT NOT NULL,
+  `theme` VARCHAR(50) NOT NULL DEFAULT 'default-glass',
+  `full_name` VARCHAR(100) DEFAULT NULL,
+  `tagline` VARCHAR(255) DEFAULT NULL,
+  `about_me` TEXT DEFAULT NULL,
+  `location` VARCHAR(100) DEFAULT NULL,
+  `social_links` JSON DEFAULT NULL,
+  `skills` JSON DEFAULT NULL,
+  `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`),
+  CONSTRAINT `fk_biodata_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Explanation of columns:
+-- `theme`: Identifies which CSS custom property palette to load on the public view.php
+-- `social_links`: A JSON object holding key-value pairs of URLs (e.g., {"twitter": "url", "github": "url"})
+-- `skills`: A JSON array holding string tags (e.g., ["PHP", "UI/UX", "JavaScript"])
+-- `ON DELETE CASCADE`: If an account is permanently deleted from `users`, their `biodata` row vanishes instantly.

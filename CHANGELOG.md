@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Dynamic Biography Core Engine (Phase 1):**
+  - **Database schema** (`database/biodata_schema.txt`) established for the `biodata` table, utilizing JSON arrays for scalable skill tags and social links.
+  - **Command Center Dashboard** (`index.php`) overhauled from a generic welcome page into a functional hub featuring a visual Theme Grid (default, neon, midnight, minimal).
+  - **Interactive Data Editor** (`user/editor.php`) implemented to manage biography content, seamlessly building JSON arrays in Javascript before leveraging Upsert logic via `user/action_update_biodata.php`.
+  - **Public Showcase Engine** (`view.php`) engineered to dynamically query and render a user's `biodata` securely based on their `username` while instantly injecting their personalized CSS Theme overrides.
 - Implemented a globally persistent, dynamic background animation system (`js/background_animation.js`).
   - Automatically spawns 20 drifting "Dynamic Biodata" FontAwesome icons (`fa-dna`, `fa-microchip`, `fa-fingerprint`, etc.) behind the glassmorphism UI.
   - Generates organic depth-of-field movement by randomizing icon scaling, opacity, starting positions, and CSS animation durations.

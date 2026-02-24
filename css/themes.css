@@ -1,0 +1,68 @@
+/* 
+ * Custom Themes System 
+ * By injecting `data-theme="xyz"` onto the HTML tag, these variables seamlessly override our global base CSS palettes.
+ */
+
+:root[data-theme="default-glass"] {
+    --bg-color: #050505;
+    --text-primary: #f3f4f6;
+    --text-secondary: #a1a1aa;
+    --card-bg: rgba(255, 255, 255, 0.03);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+
+    --primary-color: #ffffff;
+    --primary-glow: rgba(255, 255, 255, 0.15);
+
+    --tag-bg: rgba(255, 255, 255, 0.05);
+    --tag-text: #e4e4e7;
+    --tag-border: rgba(255, 255, 255, 0.1);
+}
+
+:root[data-theme="neon-cyberpunk"] {
+    --bg-color: #0d0221;
+    --text-primary: #0ff0fc;
+    --text-secondary: #ff007f;
+    --card-bg: rgba(13, 2, 33, 0.6);
+    --card-border: rgba(15, 240, 252, 0.3);
+    --card-shadow: 0 0 40px rgba(15, 240, 252, 0.1);
+
+    --primary-color: #0ff0fc;
+    --primary-glow: rgba(15, 240, 252, 0.6);
+
+    --tag-bg: rgba(255, 0, 127, 0.1);
+    --tag-text: #ff007f;
+    --tag-border: rgba(255, 0, 127, 0.4);
+}
+
+:root[data-theme="midnight-blue"] {
+    --bg-color: #0f172a;
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --card-border: rgba(51, 65, 85, 0.8);
+    --card-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+
+    --primary-color: #3b82f6;
+    --primary-glow: rgba(59, 130, 246, 0.4);
+
+    --tag-bg: rgba(59, 130, 246, 0.15);
+    --tag-text: #93c5fd;
+    --tag-border: rgba(59, 130, 246, 0.3);
+}
+
+:root[data-theme="minimal-light"] {
+    --bg-color: #f8fafc;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --card-bg: rgba(255, 255, 255, 0.9);
+    --card-border: rgba(203, 213, 225, 0.8);
+    --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+
+    --primary-color: #0f172a;
+    --primary-glow: rgba(15, 23, 42, 0.2);
+
+    --tag-bg: rgba(241, 245, 249, 1);
+    --tag-text: #334155;
+    --tag-border: rgba(203, 213, 225, 1);
+}
