@@ -44,6 +44,9 @@
 - The message should be visible when the user is typing in the password field. (UPGRADE)
 - The message should update the user's password strength as they type. (UPGRADE)
 
+### 2.4. After the user signs-up, will be redirected to a page where to set a , which the user can skip and when skipped, must generate a username according to the user's id (FORMAT: "User_"+(000000 + user_id[This is math so it must have 6 digits. Example: User with a user_id of 1 must have the Username of User_000001]))
+
+
 ## 3. Forgot Password Page
 
 ### 3.1. Same as the signup page's 2.2 and 2.3. (UPGRADE)
@@ -64,6 +67,18 @@
 
 ### 5.2. Features:
 
-#### 5.2.1. Users can change/upload a new profile picture.
+#### 5.2.1. Users can change/upload a new profile picture. (NEW)
 
-#### 5.2.2. Users 
+#### 5.2.2. Users can see and update their information here. We will make the structure dynamic so it would adjust if we have an addition to the database.(Keep the structure as we will yet to add a table in the database for the user profiles.(I will add it myself so make the dynamic structure first and only display the available informations from the users table for now.))
+
+#### This is where the user can also access the forgot password page through a button.
+
+#### 5.2.3. The user can have the ability to delete their account.(soft delete) - refer the database as i added a column 'is_archived' with a BOOLEAN value in the users table. (NEW)
+
+## 6. General
+
+### 6.1. Design Renovation to B/W Glassmorphism (UPGRADE)
+
+### 6.2. Buttons will  emit different colors when hovered according to the type of button. (UPGRADE)
+
+# NOTE: CHECK DATABASE FIRST BEFORE DOING ANYTHING. I WANT TO SEE THE DATABASE STRUCTURE FIRST.
