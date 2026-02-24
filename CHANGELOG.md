@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Dynamic Profile View & Edit Modes.
+  - `user/profile.php` now features a protected `view-mode` by default, rendering inputs cleanly as flat text and protecting against accidental keystrokes.
+  - Implemented 'Edit Profile' and 'Cancel' workflows in Javascript that strip read-only tags instantly and use HTML5 `dataset` elements to gracefully reset text back to its original database value if editing is aborted.
+  - `user/profile.php` UI generation and `user/action_profile.php` save handling were completely re-architected. Both now use dynamic array processing (`array_keys`) to map directly against the database `users` table, allowing new fields (like `age` or `location`) to immediately become editable without writing any application code, while strictly blacklisting protected columns (`password`, `user_id`, etc.).
 - Outgoing System Emails (OTPs, Verification) are now strictly unreplyable. `includes/mail_helper.php` was modified to explicitly inject a `Reply-To: noreply@dynabio.com` header to prevent users from flooding the system inbox.
 - Real-time Username Checking on `user/profile.php`.
   - Added visual `<small>` UI to inform users if a name is taken, available, or formatted incorrectly.

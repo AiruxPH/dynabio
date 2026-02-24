@@ -67,6 +67,19 @@ if (!$user) {
             transition: all 0.3s ease;
         }
 
+        /* View Mode Overrides */
+        .view-mode .avatar-upload-btn {
+            display: none !important;
+        }
+
+        .view-mode .form-control:not([readonly]) {
+            background: transparent;
+            border-color: transparent;
+            pointer-events: none;
+            color: #f8fafc;
+            padding-left: 0;
+        }
+
         .avatar-upload-btn:hover {
             background: rgba(255, 255, 255, 0.3);
             transform: scale(1.1);
@@ -100,7 +113,7 @@ if (!$user) {
 
 <body>
 
-    <div class="auth-container profile-container">
+    <div class="auth-container profile-container view-mode" id="profileContainer">
         <a href="../index.php" class="header-back"><i class="fas fa-arrow-left"></i></a>
 
         <div class="auth-header" style="margin-bottom: 1rem;">
@@ -120,33 +133,42 @@ if (!$user) {
         </div>
 
         <form id="profileForm">
-            <div class="form-group" style="position: relative;">
-                <label for="username">Username</label>
-                <input type="text" id="username" class="form-control"
-                    value="<?php echo htmlspecialchars($user['username']); ?>" required>
-                <span id="usernameWarning"
-                    style="font-size: 0.8rem; color: #94a3b8; display: block; margin-top: 0.25rem; min-height: 1rem;"></span>
-            </div>
+            <?php
+            // Define fields that should never be shown in the form
+            $system_fields = ['user_id', 'password', 'is_verified', 'verification_code', 'code_expires_at', 'created_at', 'photo', 'is_archived'];
+            // Define fields that are visible but strictly read-only
+            $readonly_fields = ['email', 'role', 'oauth_provider'];
 
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <!-- Email is usually readonly or requires a complex flow to change -->
-                <input type="email" id="email" class="form-control"
-                    value="<?php echo htmlspecialchars($user['email']); ?>" readonly
-                    style="background: rgba(255,255,255,0.02); color: #94a3b8; cursor: not-allowed;">
-            </div>
+            // Loop through dynamic database columns
+            foreach ($user as $key => $value):
+                if (in_array($key, $system_fields))
+                    continue;
 
-            <div class="form-group">
-                <label for="role">Account Role</label>
-                <input type="text" id="role" class="form-control"
-                    value="<?php echo ucfirst(htmlspecialchars($user['role'])); ?>" readonly
-                    style="background: rgba(255,255,255,0.02); color: #94a3b8; cursor: not-allowed; text-transform: capitalize;">
-            </div>
+                // Format "first_name" to "First Name"
+                $label = ucwords(str_replace('_', ' ', $key));
+                $is_readonly = in_array($key, $readonly_fields) ? 'readonly' : '';
+                $style = $is_readonly ? 'background: rgba(255,255,255,0.02); color: #94a3b8; cursor: not-allowed;' : '';
+                ?>
+                <div class="form-group" style="position: relative;">
+                    <label for="<?php echo htmlspecialchars($key); ?>"><?php echo htmlspecialchars($label); ?></label>
+                    <input type="text" id="<?php echo htmlspecialchars($key); ?>"
+                        name="<?php echo htmlspecialchars($key); ?>" class="form-control"
+                        value="<?php echo htmlspecialchars($value); ?>"
+                        data-original="<?php echo htmlspecialchars($value); ?>" <?php echo $is_readonly; ?>
+                        style="<?php echo $style; ?>" <?php echo ($key === 'username') ? 'required' : ''; ?>>
 
-            <!-- Profile Actions -->
-            <div class="action-buttons" style="flex-direction: column;">
-                <button type="submit" id="saveBtn" class="btn btn-primary">
-                    <i class="fas fa-save" style="margin-right: 8px;"></i> Save Changes
+                    <?php if ($key === 'username'): ?>
+                        <span id="usernameWarning"
+                            style="font-size: 0.8rem; color: #94a3b8; display: block; margin-top: 0.25rem; min-height: 1rem;"></span>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+
+            <!-- View Actions -->
+            <div id="viewActions" class="action-buttons" style="flex-direction: column;">
+                <button type="button" id="editProfileBtn" class="btn btn-primary"
+                    style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);">
+                    <i class="fas fa-pen" style="margin-right: 8px;"></i> Edit Profile
                 </button>
                 <a href="../auth/forgot_password.php" class="btn"
                     style="text-align: center; text-decoration: none; display:block;">
@@ -154,6 +176,16 @@ if (!$user) {
                 </a>
                 <button type="button" id="deleteBtn" class="btn btn-danger" style="margin-top: 1rem;">
                     <i class="fas fa-trash-alt" style="margin-right: 8px;"></i> Delete Account
+                </button>
+            </div>
+
+            <!-- Edit Actions -->
+            <div id="editActions" class="action-buttons" style="display: none; flex-direction: column;">
+                <button type="submit" id="saveBtn" class="btn btn-primary">
+                    <i class="fas fa-save" style="margin-right: 8px;"></i> Save Changes
+                </button>
+                <button type="button" id="cancelEditBtn" class="btn">
+                    Cancel
                 </button>
             </div>
         </form>
@@ -204,9 +236,9 @@ if (!$user) {
             btn.innerHTML = '<span class="spinner"></span> Saving...';
             btn.disabled = true;
 
-            const formData = new FormData();
+            const formData = new FormData(this);
             formData.append('action', 'update_profile');
-            formData.append('username', document.getElementById('username').value);
+
             if (photoInput.files.length > 0) {
                 formData.append('photo', photoInput.files[0]);
             }
@@ -218,9 +250,20 @@ if (!$user) {
                 });
                 const data = await response.json();
                 showAlert(data.message, data.success);
+
+                if (data.success) {
+                    // Update dataset original values silently
+                    const inputs = this.querySelectorAll('input:not([type="file"])');
+                    inputs.forEach(input => input.dataset.original = input.value);
+
+                    // Revert to view mode
+                    setTimeout(() => disableEditMode(), 1000);
+                } else {
+                    profileGuard.setDirty(true);
+                }
             } catch (err) {
                 showAlert("Network error occurred.", false);
-                profileGuard.setDirty(true); // reset dirty flag because save failed
+                profileGuard.setDirty(true);
             }
 
             btn.innerHTML = originalText;
@@ -270,81 +313,111 @@ if (!$user) {
     <script>
         const profileGuard = new FormGuard('profileForm', 'saveBtn');
 
-        // Live Username Validation
-        const usernameInput = document.getElementById('username');
-        const usernameWarning = document.getElementById('usernameWarning');
-        const saveBtn = document.getElementById('saveBtn');
-        const originalUsername = usernameInput.value;
-        const reservedWords = ['admin', 'support', 'help', 'root', 'api', 'login', 'signup', 'settings', 'dashboard', 'system', 'staff', 'mod', 'owner', 'blog', 'about', 'contact', 'null', 'undefined'];
-        const usernameRegex = /^[a-zA-Z0-9](_(?!_)|[a-zA-Z0-9]){2,18}[a-zA-Z0-9]$/;
-        let debounceTimer;
+        // View Mode vs Edit Mode Logic
+        const profileContainer = document.getElementById('profileContainer');
+        const viewActions = document.getElementById('viewActions');
+        const editActions = document.getElementById('editActions');
 
-        usernameInput.addEventListener('input', (e) => {
-            clearTimeout(debounceTimer);
-
-            let val = e.target.value;
-            usernameWarning.style.color = '#f87171'; // Default red
-
-            // Force lowercase
-            if (val !== val.toLowerCase()) {
-                val = val.toLowerCase();
-                e.target.value = val;
-            }
-
-            if (val === originalUsername) {
-                usernameWarning.textContent = '';
-                saveBtn.disabled = false;
-                return;
-            }
-
-            if (val.length === 0) {
-                usernameWarning.textContent = 'Username is required.';
-                saveBtn.disabled = true;
-                return;
-            }
-
-            if (reservedWords.includes(val)) {
-                usernameWarning.textContent = 'This username is reserved and cannot be used.';
-                saveBtn.disabled = true;
-                return;
-            }
-
-            if (!usernameRegex.test(val)) {
-                usernameWarning.textContent = '4-20 chars, alphanumeric or single underscores, cannot start/end with underscore.';
-                saveBtn.disabled = true;
-                return;
-            }
-
-            // Client checks passed, show loading indicator
-            usernameWarning.style.color = '#94a3b8';
-            usernameWarning.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Checking availability...';
-            saveBtn.disabled = true;
-
-            // Debounced AJAX Request
-            debounceTimer = setTimeout(async () => {
-                try {
-                    const response = await fetch('action_check_username.php', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: val })
-                    });
-                    const data = await response.json();
-
-                    if (data.success) {
-                        usernameWarning.style.color = '#4ade80';
-                        usernameWarning.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.message;
-                        saveBtn.disabled = false;
-                    } else {
-                        usernameWarning.style.color = '#f87171';
-                        usernameWarning.innerHTML = '<i class="fas fa-times-circle"></i> ' + data.message;
-                        saveBtn.disabled = true;
-                    }
-                } catch (error) {
-                    usernameWarning.style.color = '#f87171';
-                    usernameWarning.textContent = 'Error checking username.';
-                }
-            }, 600); // 600ms delay
+        document.getElementById('editProfileBtn').addEventListener('click', () => {
+            profileContainer.classList.remove('view-mode');
+            viewActions.style.display = 'none';
+            editActions.style.display = 'flex';
+            if (usernameInput) usernameInput.focus();
         });
+
+        function disableEditMode() {
+            profileContainer.classList.add('view-mode');
+            viewActions.style.display = 'flex';
+            editActions.style.display = 'none';
+
+            // Reset inputs to database originals
+            const inputs = document.getElementById('profileForm').querySelectorAll('input:not([type="file"])');
+            inputs.forEach(input => {
+                input.value = input.dataset.original || '';
+            });
+
+            // Reset photo preview and file input
+            const originalSrc = '../<?php echo htmlspecialchars($user['photo'] ?? 'images/default.png'); ?>';
+            document.getElementById('avatarPreview').src = originalSrc;
+            photoInput.value = '';
+
+            // Reset username warning
+            if (usernameWarning) usernameWarning.textContent = '';
+
+            // Re-lock FormGuard
+            profileGuard.setDirty(false);
+        }
+
+        document.getElementById('cancelEditBtn').addEventListener('click', disableEditMode);
+
+        if (usernameInput && usernameWarning) {
+            usernameInput.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+
+                let val = e.target.value;
+                usernameWarning.style.color = '#f87171'; // Default red
+
+                // Force lowercase
+                if (val !== val.toLowerCase()) {
+                    val = val.toLowerCase();
+                    e.target.value = val;
+                }
+
+                if (val === originalUsername) {
+                    usernameWarning.textContent = '';
+                    saveBtn.disabled = false;
+                    return;
+                }
+
+                if (val.length === 0) {
+                    usernameWarning.textContent = 'Username is required.';
+                    saveBtn.disabled = true;
+                    return;
+                }
+
+                if (reservedWords.includes(val)) {
+                    usernameWarning.textContent = 'This username is reserved and cannot be used.';
+                    saveBtn.disabled = true;
+                    return;
+                }
+
+                if (!usernameRegex.test(val)) {
+                    usernameWarning.textContent = '4-20 chars, alphanumeric or single underscores, cannot start/end with underscore.';
+                    saveBtn.disabled = true;
+                    return;
+                }
+
+                // Client checks passed, show loading indicator
+                usernameWarning.style.color = '#94a3b8';
+                usernameWarning.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Checking availability...';
+                saveBtn.disabled = true;
+
+                // Debounced AJAX Request
+                debounceTimer = setTimeout(async () => {
+                    try {
+                        const response = await fetch('action_check_username.php', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ username: val })
+                        });
+                        const data = await response.json();
+
+                        if (data.success) {
+                            usernameWarning.style.color = '#4ade80';
+                            usernameWarning.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.message;
+                            saveBtn.disabled = false;
+                        } else {
+                            usernameWarning.style.color = '#f87171';
+                            usernameWarning.innerHTML = '<i class="fas fa-times-circle"></i> ' + data.message;
+                            saveBtn.disabled = true;
+                        }
+                    } catch (error) {
+                        usernameWarning.style.color = '#f87171';
+                        usernameWarning.textContent = 'Error checking username.';
+                    }
+                }, 600); // 600ms delay
+            });
+        }
     </script>
     <?php include __DIR__ . '/../includes/username_modal.php'; ?>
 </body>

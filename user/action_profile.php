@@ -12,42 +12,72 @@ $user_id = $_SESSION['user_id'];
 $action = $_POST['action'] ?? '';
 
 if ($action === 'update_profile') {
-    $username = trim($_POST['username'] ?? '');
+    // 1. Fetch current user to get valid columns
+    $stmt = $conn->prepare("SELECT * FROM users WHERE user_id = ?");
+    $stmt->execute([$user_id]);
+    $currentUser = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$currentUser) {
+        jsonResponse(false, 'User not found.');
+    }
+    $valid_columns = array_keys($currentUser);
 
-    if (empty($username)) {
-        jsonResponse(false, 'Username cannot be empty.');
+    // 2. Define protected fields exactly as in the frontend
+    $system_fields = ['user_id', 'password', 'is_verified', 'verification_code', 'code_expires_at', 'created_at', 'photo', 'is_archived'];
+    $readonly_fields = ['email', 'role', 'oauth_provider'];
+
+    $update_fields = [];
+    $update_values = [];
+
+    // 3. Process $_POST dynamically
+    foreach ($_POST as $key => $value) {
+        if ($key === 'action')
+            continue; // skip the action tag
+
+        $value = trim($value);
+
+        // Skip invalid columns, system fields, and readonly fields
+        if (!in_array($key, $valid_columns))
+            continue;
+        if (in_array($key, $system_fields))
+            continue;
+        if (in_array($key, $readonly_fields))
+            continue;
+
+        // Special Validation for Username
+        if ($key === 'username') {
+            if (empty($value))
+                jsonResponse(false, 'Username cannot be empty.');
+            if ($value !== strtolower($value))
+                jsonResponse(false, 'Username must be strictly lowercase.');
+            if (!preg_match('/^[a-zA-Z0-9](_(?!_)|[a-zA-Z0-9]){2,18}[a-zA-Z0-9]$/', $value)) {
+                jsonResponse(false, 'Username must be 4-20 characters, alphanumeric or single underscores, and cannot start/end with an underscore.');
+            }
+            $reservedWords = ['admin', 'support', 'help', 'root', 'api', 'login', 'signup', 'settings', 'dashboard', 'system', 'staff', 'mod', 'owner', 'blog', 'about', 'contact', 'null', 'undefined'];
+            if (in_array($value, $reservedWords))
+                jsonResponse(false, 'This username is reserved and cannot be used.');
+
+            // Check uniqueness if changed
+            if ($value !== $currentUser['username']) {
+                $check = $conn->prepare("SELECT user_id FROM users WHERE username = ? AND user_id != ?");
+                $check->execute([$value, $user_id]);
+                if ($check->fetch()) {
+                    jsonResponse(false, 'Username is already taken.');
+                }
+            }
+        }
+
+        // Add to update array
+        $update_fields[] = "$key = ?";
+        $update_values[] = $value;
     }
 
-    // Strict Backend Validation
-    if ($username !== strtolower($username)) {
-        jsonResponse(false, 'Username must be strictly lowercase.');
-    }
-
-    if (!preg_match('/^[a-zA-Z0-9](_(?!_)|[a-zA-Z0-9]){2,18}[a-zA-Z0-9]$/', $username)) {
-        jsonResponse(false, 'Username must be 4-20 characters, alphanumeric or single underscores, and cannot start/end with an underscore.');
-    }
-
-    $reservedWords = ['admin', 'support', 'help', 'root', 'api', 'login', 'signup', 'settings', 'dashboard', 'system', 'staff', 'mod', 'owner', 'blog', 'about', 'contact', 'null', 'undefined'];
-    if (in_array($username, $reservedWords)) {
-        jsonResponse(false, 'This username is reserved and cannot be used.');
-    }
-
-    // Check if username is taken by another user
-    $check = $conn->prepare("SELECT user_id FROM users WHERE username = ? AND user_id != ?");
-    $check->execute([$username, $user_id]);
-    if ($check->fetch()) {
-        jsonResponse(false, 'Username is already taken.');
-    }
-
-    // Handle Photo Upload
-    $photoPath = null;
+    // 4. Handle Photo Upload
     if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
         $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
         if (!in_array($_FILES['photo']['type'], $allowedTypes)) {
             jsonResponse(false, 'Invalid image format. Allowed: JPG, PNG, GIF, WEBP.');
         }
 
-        // max size 2MB
         if ($_FILES['photo']['size'] > 2 * 1024 * 1024) {
             jsonResponse(false, 'Image size must be less than 2MB.');
         }
@@ -56,29 +86,31 @@ if ($action === 'update_profile') {
         $filename = 'user_' . $user_id . '_' . time() . '.' . $ext;
         $targetDir = __DIR__ . '/../images/profiles/';
 
-        // ensure dir exists
         if (!is_dir($targetDir)) {
             mkdir($targetDir, 0755, true);
         }
 
         if (move_uploaded_file($_FILES['photo']['tmp_name'], $targetDir . $filename)) {
-            $photoPath = 'images/profiles/' . $filename;
+            $update_fields[] = "photo = ?";
+            $update_values[] = 'images/profiles/' . $filename;
         } else {
             jsonResponse(false, 'Failed to upload image.');
         }
     }
 
-    try {
-        if ($photoPath) {
-            $update = $conn->prepare("UPDATE users SET username = ?, photo = ? WHERE user_id = ?");
-            $update->execute([$username, $photoPath, $user_id]);
-        } else {
-            $update = $conn->prepare("UPDATE users SET username = ? WHERE user_id = ?");
-            $update->execute([$username, $user_id]);
+    // 5. Execute Dynamic Update
+    if (!empty($update_fields)) {
+        try {
+            $update_values[] = $user_id; // append for the WHERE clause
+            $sql = "UPDATE users SET " . implode(', ', $update_fields) . " WHERE user_id = ?";
+            $update = $conn->prepare($sql);
+            $update->execute($update_values);
+            jsonResponse(true, 'Profile updated successfully.');
+        } catch (Exception $e) {
+            jsonResponse(false, 'Database error: ' . $e->getMessage());
         }
-        jsonResponse(true, 'Profile updated successfully.');
-    } catch (Exception $e) {
-        jsonResponse(false, 'Database error: ' . $e->getMessage());
+    } else {
+        jsonResponse(true, 'No changes to update.');
     }
 } elseif ($action === 'delete_account') {
     try {

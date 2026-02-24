@@ -1,3 +1,5 @@
+[DONE]
+
 -- Run this in your database to enforce unique usernames WITHOUT an index.
 
 DELIMITER //
