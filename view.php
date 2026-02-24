@@ -410,10 +410,47 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
             color: #ef4444;
             margin-bottom: 1rem;
         }
+
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn:hover {
+            color: var(--primary-color, #fff);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .back-btn {
+                top: 1rem;
+                left: 1rem;
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
     </style>
 </head>
 
 <body>
+
+    <a href="index.php" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
 
     <?php if ($errorState): ?>
         <div class="container-col">
