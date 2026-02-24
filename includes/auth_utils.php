@@ -10,7 +10,7 @@ function generateVerificationCode()
 {
     $chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
     $code = '';
-    for ($i = 0; $i < 16; $i++) {
+    for ($i = 0; $i < 6; $i++) {
         $code .= $chars[random_int(0, strlen($chars) - 1)];
     }
     return $code;
@@ -26,7 +26,7 @@ function sendVerificationEmail($email, $code, $type = 'signup')
     <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;'>
         <h2 style='color: #333;'>Dynabio Verification</h2>
         <p>Your verification code is:</p>
-        <h1 style='color: #007BFF; letter-spacing: 2px;'>{$code}</h1>
+        <h1 style='color: #007BFF; letter-spacing: 4px; font-family: \"Courier New\", Courier, monospace; background: #f8f9fa; padding: 10px; text-align: center; border-radius: 5px;'>{$code}</h1>
         <p>Please enter this code on the website to continue.</p>
         <p style='color: #777; font-size: 12px;'>If you didn't request this, please ignore this email.</p>
     </div>

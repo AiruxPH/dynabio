@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- OTP Verification Quality of Life updates:
+  - Upgraded the `auth/verify.php` frontend to utilize a modern 6-box OTP entry interface in place of a generic text input. The inputs natively feature auto-advancing keystrokes, full-string pasting support, backspace navigation, and auto-submission upon entering the final digit.
+  - Shortened the required authentication code length from 16 characters to 6 for better usability.
+  - Upgraded the `auth_utils.php` email template to render the OTP in a Courier monospace font with wider letter-spacing, resolving visual ambiguity between characters like 'I' and 'l'.
+  - `auth/verify.php` now automatically clears the input field when a user successfully requests to resend a code.
 - Real-Time Account Chooser Sync. `auth/login.php` now intercepts its `localStorage` on boot and passes it through an AJAX call to a new `auth/action_sync_accounts.php` endpoint. This guarantees that if a user changes their username or deletes their account on one device, their icon and login card on other devices will securely update or vanish instantly, preventing stale data.
 - Profile View & Edit Modes.
   - `user/profile.php` now features a protected `view-mode` by default, rendering inputs cleanly as flat text and protecting against accidental keystrokes.

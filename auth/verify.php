@@ -14,6 +14,34 @@ if (empty($email)) {
     <title>Verify Account - Dynabio</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .otp-fields {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .otp-fields input {
+            width: 45px;
+            height: 55px;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.03);
+            color: #f8fafc;
+            transition: all 0.2s ease;
+        }
+
+        .otp-fields input:focus {
+            border-color: #3b82f6;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+        }
+    </style>
 </head>
 
 <body>
@@ -21,7 +49,7 @@ if (empty($email)) {
     <div class="auth-container">
         <div class="auth-header">
             <h1>Verify your Email</h1>
-            <p>We sent a 16-character code to <strong>
+            <p>We sent a 6-character code to <strong>
                     <?php echo htmlspecialchars($email); ?>
                 </strong></p>
         </div>
@@ -31,10 +59,16 @@ if (empty($email)) {
         <form id="verifyForm">
             <input type="hidden" id="email" value="<?php echo htmlspecialchars($email); ?>">
 
-            <div class="form-group">
-                <label for="code">Verification Code</label>
-                <input type="text" id="code" class="form-control" placeholder="16-character code" required
-                    minlength="16" maxlength="16" autocomplete="off" style="letter-spacing: 2px; text-align: center;">
+            <div class="form-group" style="text-align: center;">
+                <label>Verification Code</label>
+                <div class="otp-fields" id="otpFields">
+                    <input type="text" maxlength="1" class="otp-input" autocomplete="off" autofocus>
+                    <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                    <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                    <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                    <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                    <input type="text" maxlength="1" class="otp-input" autocomplete="off">
+                </div>
             </div>
 
             <button type="submit" id="submitBtn" class="btn btn-primary">
@@ -105,6 +139,9 @@ if (empty($email)) {
                     alertBox.textContent = "New verification code sent!";
                     alertBox.className = 'alert alert-success';
                     alertBox.style.display = 'block';
+                    // Clear all OTP fields
+                    otpInputs.forEach(input => input.value = '');
+                    otpInputs[0].focus();
                     startTimer();
                 } else {
                     alertBox.textContent = data.message;
@@ -122,14 +159,98 @@ if (empty($email)) {
             }
         });
 
+        // OTP Field Logic
+        const otpInputs = document.querySelectorAll('.otp-input');
+
+        otpInputs.forEach((input, index) => {
+            // Handle pasting a full code
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                // Get pasted text, remove non-alphanumeric characters
+                let pastedData = e.clipboardData.getData('text').replace(/[^a-zA-Z0-9]/g, '');
+
+                if (pastedData.length > 0) {
+                    for (let i = 0; i < 6; i++) {
+                        otpInputs[i].value = pastedData[i] || '';
+                    }
+
+                    // Focus the next empty box, or the last box if full
+                    let nextEmptyIndex = Array.from(otpInputs).findIndex(input => !input.value);
+                    if (nextEmptyIndex !== -1) {
+                        otpInputs[nextEmptyIndex].focus();
+                    } else {
+                        otpInputs[5].focus();
+                    }
+
+                    // Auto-submit if fully pasted (all 6 digits present)
+                    if (pastedData.length >= 6) {
+                        document.getElementById('verifyForm').dispatchEvent(new Event('submit'));
+                    }
+                }
+            });
+
+            // Handle typing and auto-advancing
+            input.addEventListener('input', (e) => {
+                // Ensure only alphanumeric characters
+                input.value = input.value.replace(/[^a-zA-Z0-9]/g, '');
+
+                const val = input.value;
+                if (val && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                } else if (val && index === otpInputs.length - 1) {
+                    // Auto-submit on last digit typed
+                    document.getElementById('verifyForm').dispatchEvent(new Event('submit'));
+                }
+            });
+
+            // Handle keyboard navigation (Backspace, left/right arrows)
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    otpInputs[index - 1].focus();
+                } else if (e.key === 'ArrowLeft' && index > 0) {
+                    otpInputs[index - 1].focus();
+                    // Optional: set cursor to end of string in the left box
+                    setTimeout(() => otpInputs[index - 1].setSelectionRange(1, 1), 10);
+                } else if (e.key === 'ArrowRight' && index < otpInputs.length - 1) {
+                    otpInputs[index + 1].focus();
+                    setTimeout(() => otpInputs[index + 1].setSelectionRange(1, 1), 10);
+                }
+            });
+
+            // Prevent users from clicking out of order
+            input.addEventListener('click', () => {
+                // Find the very first empty box in the array
+                let firstEmptyIndex = Array.from(otpInputs).findIndex(input => !input.value);
+
+                // If there's an empty box AND they clicked a box that is further ahead than the first empty one
+                if (firstEmptyIndex !== -1 && index > firstEmptyIndex) {
+                    otpInputs[firstEmptyIndex].focus();
+                } else if (input.value) {
+                    // Set cursor to the right of the character if they clicked a filled box
+                    input.setSelectionRange(1, 1);
+                }
+            });
+        });
+
         // Verify Form Logic
         document.getElementById('verifyForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            const code = document.getElementById('code').value;
+            // Gather the 6 digits
+            let code = '';
+            otpInputs.forEach(input => code += input.value);
+
+            if (code.length !== 6) {
+                alertBox.textContent = "Please enter all 6 digits.";
+                alertBox.className = 'alert alert-danger';
+                alertBox.style.display = 'block';
+                return;
+            }
+
             const submitBtn = document.getElementById('submitBtn');
 
             submitBtn.disabled = true;
+            otpInputs.forEach(input => input.disabled = true);
             submitBtn.innerHTML = '<span class="spinner"></span> Verifying...';
             alertBox.style.display = 'none';
             alertBox.className = 'alert';
@@ -156,6 +277,7 @@ if (empty($email)) {
                     alertBox.classList.add('alert-danger');
                     alertBox.style.display = 'block';
                     submitBtn.disabled = false;
+                    otpInputs.forEach(input => input.disabled = false);
                     submitBtn.innerHTML = '<span id="btnText">Verify & Continue</span>';
                 }
             } catch (error) {
@@ -163,6 +285,7 @@ if (empty($email)) {
                 alertBox.classList.add('alert-danger');
                 alertBox.style.display = 'block';
                 submitBtn.disabled = false;
+                otpInputs.forEach(input => input.disabled = false);
                 submitBtn.innerHTML = '<span id="btnText">Verify & Continue</span>';
             }
         });
