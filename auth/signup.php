@@ -87,8 +87,13 @@ if (isset($_SESSION['user_id'])) {
                 alertBox.style.display = 'block';
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<span id="btnText">Continue with Email</span>';
+                signupGuard.setDirty(true);
             }
         });
+    </script>
+    <script src="../js/form_guards.js"></script>
+    <script>
+        const signupGuard = new FormGuard('signupForm', 'submitBtn');
     </script>
 </body>
 

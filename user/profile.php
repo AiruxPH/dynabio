@@ -218,6 +218,7 @@ if (!$user) {
                 showAlert(data.message, data.success);
             } catch (err) {
                 showAlert("Network error occurred.", false);
+                profileGuard.setDirty(true); // reset dirty flag because save failed
             }
 
             btn.innerHTML = originalText;
@@ -262,6 +263,10 @@ if (!$user) {
                 btn.disabled = false;
             }
         });
+    </script>
+    <script src="../js/form_guards.js"></script>
+    <script>
+        const profileGuard = new FormGuard('profileForm', 'saveBtn');
     </script>
     <?php include __DIR__ . '/../includes/username_modal.php'; ?>
 </body>

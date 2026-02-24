@@ -248,7 +248,7 @@ if (isset($_SESSION['user_id'])) {
         const changeAccountBtn = document.getElementById('changeAccountBtn');
         const identifierGroup = document.getElementById('identifierGroup');
         const authFooter = document.getElementById('authFooter');
-        
+
         // State
         let selectedUsername = null;
 
@@ -276,7 +276,7 @@ if (isset($_SESSION['user_id'])) {
                 accountChooser.style.display = 'block';
                 loginForm.style.display = 'none';
                 authFooter.style.display = 'none';
-                
+
                 accountList.innerHTML = '';
                 logins.forEach(account => {
                     const card = document.createElement('div');
@@ -290,14 +290,14 @@ if (isset($_SESSION['user_id'])) {
                             <i class="fas fa-times"></i>
                         </button>
                     `;
-                    
+
                     // Card click
                     card.addEventListener('click', (e) => {
                         // Ignore if clicked on remove button
                         if (e.target.closest('.account-remove')) return;
                         selectAccount(account);
                     });
-                    
+
                     // Remove click
                     const removeBtn = card.querySelector('.account-remove');
                     removeBtn.addEventListener('click', (e) => {
@@ -317,29 +317,29 @@ if (isset($_SESSION['user_id'])) {
         function selectAccount(account) {
             selectedUsername = account.username;
             emailInput.value = account.username; // Auto-fill internally
-            
+
             // UI Transitions
             accountChooser.style.display = 'none';
             loginForm.style.display = 'block';
             authFooter.style.display = 'none'; // Keep hidden during quick-login
-            
+
             identifierGroup.style.display = 'none'; // Hide normal email input
             activeAccountPreview.style.display = 'flex';
-            
+
             activeAccountImg.src = '../' + account.avatar_url;
             activeAccountName.textContent = account.username;
-            
+
             passwordInput.focus();
         }
 
         function showStandardLogin() {
             selectedUsername = null;
             emailInput.value = '';
-            
+
             accountChooser.style.display = 'none';
             loginForm.style.display = 'block';
             authFooter.style.display = 'block';
-            
+
             identifierGroup.style.display = 'block';
             activeAccountPreview.style.display = 'none';
         }
@@ -358,12 +358,12 @@ if (isset($_SESSION['user_id'])) {
             let logins = [];
             const stored = localStorage.getItem('recent_logins');
             if (stored) {
-                try { logins = JSON.parse(stored); } catch (e) {}
+                try { logins = JSON.parse(stored); } catch (e) { }
             }
-            
+
             // Remove existing entry if it exists to update it and move to top
             logins = logins.filter(acc => acc.username !== username);
-            
+
             logins.unshift({
                 username: username,
                 avatar_url: avatar_url,
@@ -417,7 +417,7 @@ if (isset($_SESSION['user_id'])) {
                     alertBox.textContent = data.message;
                     alertBox.classList.add('alert-success');
                     alertBox.style.display = 'block';
-                    
+
                     // Trigger Account Chooser Save Logic
                     if (remember && data.user) {
                         saveRecentLogin(data.user.username, data.user.photo);
@@ -448,6 +448,12 @@ if (isset($_SESSION['user_id'])) {
                 submitBtn.innerHTML = '<span id="btnText">Log in</span>';
             }
         });
+    </script>
+    <script src="../js/form_guards.js"></script>
+    <script>
+        // We do not track dirty state for login to avoid annoying the user on account switch
+        // but we still want the robust offline protection logic.
+        const loginGuard = new FormGuard('loginForm', 'submitBtn', { trackDirty: false });
     </script>
 </body>
 

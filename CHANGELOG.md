@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Global `js/form_guards.js` utility class constructed to provide offline submission blocking and native browser unsaved-changes warnings (`beforeunload`).
+  - Integrated into `user/profile.php` to prevent catastrophic data loss if users navigate away with a dirty form.
+  - Intercepts offline events dynamically, disabling submit buttons globally to prevent hanging requests.
+  - Successfully mapped across `auth/signup.php` and `auth/login.php` (with configurable trackDirty toggles).
 - Persistent "Account Chooser" feature in `auth/login.php` to streamline authentication for returning users on trusted devices.
   - Utilizes `localStorage` to securely save up to 5 recent usernames and avatars, exclusively trigged by the "Remember me" checkbox.
   - Implements a Google-style "Active Account Preview" banner that hides the username input when returning from a quick-login card.
