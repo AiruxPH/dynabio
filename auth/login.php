@@ -73,9 +73,9 @@ if (isset($_SESSION['user_id'])) {
 
         <form id="loginForm">
             <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" class="form-control" placeholder="you@example.com" required
-                    autocomplete="new-password">
+                <label for="email">Email Address or Username</label>
+                <input type="text" id="email" class="form-control" placeholder="you@example.com or username" required
+                    autocomplete="username">
             </div>
 
             <div class="form-group">

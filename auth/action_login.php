@@ -5,21 +5,21 @@ require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth_utils.php';
 
 $data = json_decode(file_get_contents('php://input'), true);
-$email = $data['email'] ?? '';
+$identifier = $data['email'] ?? '';
 $password = $data['password'] ?? '';
 $remember = $data['remember'] ?? false;
 
-if (empty($email) || empty($password)) {
-    jsonResponse(false, 'Email and password are required.');
+if (empty($identifier) || empty($password)) {
+    jsonResponse(false, 'Email/Username and password are required.');
 }
 
 try {
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$email]);
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? OR username = ?");
+    $stmt->execute([$identifier, $identifier]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$user) {
-        jsonResponse(false, 'Invalid email or password.');
+        jsonResponse(false, 'Invalid email/username or password.');
     }
 
     // Check verification status and expiration rules
@@ -35,18 +35,18 @@ try {
             $code = generateVerificationCode();
             $update = $conn->prepare("UPDATE users SET verification_code = ?, date_registered = NOW() WHERE user_id = ?");
             $update->execute([$code, $user['user_id']]);
-            sendVerificationEmail($email, $code, 'signup');
+            sendVerificationEmail($user['email'], $code, 'signup');
 
-            jsonResponse(false, 'Verification expired safely. A new code was sent to your email. Redirecting...', 'verify.php?email=' . urlencode($email));
+            jsonResponse(false, 'Verification expired safely. A new code was sent to your email. Redirecting...', 'verify.php?email=' . urlencode($user['email']));
         }
 
         // < 24 hours, just not verified yet
-        jsonResponse(false, 'Your account is not verified. Please check your email. Redirecting...', 'verify.php?email=' . urlencode($email));
+        jsonResponse(false, 'Your account is not verified. Please check your email. Redirecting...', 'verify.php?email=' . urlencode($user['email']));
     }
 
     // Account is verified, check password
     if (!password_verify($password, $user['password'])) {
-        jsonResponse(false, 'Invalid email or password.');
+        jsonResponse(false, 'Invalid email/username or password.');
     }
 
     // Login successful

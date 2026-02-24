@@ -113,6 +113,16 @@ if (isset($user) && empty($user['username'])):
             color: #4ade80;
             border: 1px solid rgba(34, 197, 94, 0.2);
         }
+
+        .username-modal-validation-warning {
+            font-size: 0.8rem;
+            color: #f87171;
+            text-align: left;
+            display: block;
+            margin-top: -1rem;
+            margin-bottom: 1.5rem;
+            height: 1rem;
+        }
     </style>
 
     <div class="username-modal-overlay" id="usernameModalOverlay">
@@ -122,12 +132,14 @@ if (isset($user) && empty($user['username'])):
 
             <div id="usernameModalAlert" class="username-modal-alert"></div>
 
-            <input type="text" id="usernameModalInput" class="username-modal-input" placeholder="e.g. CyberNinja99"
+            <input type="text" id="usernameModalInput" class="username-modal-input" placeholder="e.g. cyberninja99"
                 autocomplete="off">
+            <span id="usernameModalWarning" class="username-modal-validation-warning"></span>
 
             <div class="username-modal-actions">
                 <button class="username-modal-btn username-modal-btn-secondary" id="usernameModalSkipBtn">Skip</button>
-                <button class="username-modal-btn username-modal-btn-primary" id="usernameModalSaveBtn">Save</button>
+                <button class="username-modal-btn username-modal-btn-primary" id="usernameModalSaveBtn"
+                    disabled>Save</button>
             </div>
         </div>
     </div>
@@ -139,6 +151,40 @@ if (isset($user) && empty($user['username'])):
             const skipBtn = document.getElementById('usernameModalSkipBtn');
             const saveBtn = document.getElementById('usernameModalSaveBtn');
             const alertBox = document.getElementById('usernameModalAlert');
+            const warningBox = document.getElementById('usernameModalWarning');
+
+            const reservedWords = ['admin', 'support', 'help', 'root', 'api', 'login', 'signup', 'settings', 'dashboard', 'system', 'staff', 'mod', 'owner', 'blog', 'about', 'contact', 'null', 'undefined'];
+            const usernameRegex = /^[a-zA-Z0-9](_(?!_)|[a-zA-Z0-9]){2,18}[a-zA-Z0-9]$/;
+
+            // Live Validation Logic
+            input.addEventListener('input', (e) => {
+                let val = e.target.value;
+                let warningText = '';
+                let isValid = true;
+
+                // Check lowercase constraint dynamically
+                if (val !== val.toLowerCase()) {
+                    warningText = 'Only lowercase letters are allowed.';
+                    val = val.toLowerCase();
+                    e.target.value = val; // Force lowercase visually
+                    isValid = false;
+                }
+
+                if (val.length > 0) {
+                    if (reservedWords.includes(val)) {
+                        warningText = 'This username is reserved and cannot be used.';
+                        isValid = false;
+                    } else if (!usernameRegex.test(val)) {
+                        warningText = '4-20 chars, alphanumeric or single underscores, cannot start/end with underscore.';
+                        isValid = false;
+                    }
+                } else {
+                    isValid = false; // Empty is not valid for saving
+                }
+
+                warningBox.textContent = warningText;
+                saveBtn.disabled = !isValid;
+            });
 
             function showModalAlert(msg, isSuccess) {
                 alertBox.textContent = msg;
@@ -200,6 +246,7 @@ if (isset($user) && empty($user['username'])):
             }
 
             saveBtn.addEventListener('click', () => {
+                if (saveBtn.disabled) return;
                 const val = input.value.trim();
                 if (!val) {
                     showModalAlert('Please enter a username or click skip.', false);

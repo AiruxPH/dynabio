@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Username login support alongside Email. Modifed `login.php` to accept both formats visually and fundamentally via `action_login.php`.
+- Database trigger SQL script (`database/username_trigger.txt`) explicitly providing safeguards against duplicate usernames across the `users` table via `BEFORE INSERT` and `BEFORE UPDATE` logic.
+- Comprehensive local (frontend) and strict remote (backend) validation ensuring usernames:
+  - Max 20 characters via precise internal regex.
+  - Abide mechanically by `^[a-zA-Z0-9](_(?!_)|[a-zA-Z0-9]){2,18}[a-zA-Z0-9]$`.
+  - Are strictly formatted lowercase.
+  - Ban an expansive list of administrative/reserved system keywords.
 - Global `includes/username_modal.php` dynamically prompting users without a username to set one or skip (with auto-generation). Applied to protected dashboard and profile pages.
 
 ### Fixed
