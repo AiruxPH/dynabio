@@ -96,6 +96,7 @@ if (isset($_SESSION['user_id'])) {
     <script>
         const signupGuard = new FormGuard('signupForm', 'submitBtn');
     </script>
+    <script src="../js/background_animation.js"></script>
 </body>
 
 </html>

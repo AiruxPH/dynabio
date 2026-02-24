@@ -500,6 +500,7 @@ if (isset($_SESSION['user_id'])) {
         // but we still want the robust offline protection logic.
         const loginGuard = new FormGuard('loginForm', 'submitBtn', { trackDirty: false });
     </script>
+    <script src="../js/background_animation.js"></script>
 </body>
 
 </html>

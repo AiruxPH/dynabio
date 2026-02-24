@@ -99,6 +99,7 @@ if (!isset($_SESSION['setup_user_id'])) {
             submitUsername('', true);
         });
     </script>
+    <script src="../js/background_animation.js"></script>
 </body>
 
 </html>

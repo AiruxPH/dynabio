@@ -330,3 +330,41 @@ body {
     margin-top: 0.75rem;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* --- Animated Background --- */
+#animated-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.floating-icon {
+    position: absolute;
+    color: #ffffff;
+    filter: blur(1px);
+    /* Default slight blur for depth */
+    animation: drift linear infinite;
+}
+
+@keyframes drift {
+    0% {
+        transform: translateY(0) rotate(0deg) scale(1);
+    }
+
+    33% {
+        transform: translateY(-30vh) rotate(120deg) scale(1.1);
+    }
+
+    66% {
+        transform: translateY(-60vh) rotate(240deg) scale(0.9);
+    }
+
+    100% {
+        transform: translateY(-100vh) rotate(360deg) scale(1);
+    }
+}

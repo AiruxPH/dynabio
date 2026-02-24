@@ -64,6 +64,7 @@ $roleName = ucfirst($user['role']);
     </div>
 
     <?php include __DIR__ . '/includes/username_modal.php'; ?>
+    <script src="js/background_animation.js"></script>
 </body>
 
 </html>

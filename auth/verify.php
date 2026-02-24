@@ -290,6 +290,7 @@ if (empty($email)) {
             }
         });
     </script>
+    <script src="../js/background_animation.js"></script>
 </body>
 
 </html>

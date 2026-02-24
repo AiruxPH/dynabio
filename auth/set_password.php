@@ -281,6 +281,7 @@ if (!isset($_SESSION['verified_email'])) {
             }
         });
     </script>
+    <script src="../js/background_animation.js"></script>
 </body>
 
 </html>

@@ -89,6 +89,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
             }
         });
     </script>
+    <script src="../js/background_animation.js"></script>
 </body>
 
 </html>

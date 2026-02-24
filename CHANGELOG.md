@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Implemented a globally persistent, dynamic background animation system (`js/background_animation.js`).
+  - Automatically spawns 20 drifting "Dynamic Biodata" FontAwesome icons (`fa-dna`, `fa-microchip`, `fa-fingerprint`, etc.) behind the glassmorphism UI.
+  - Generates organic depth-of-field movement by randomizing icon scaling, opacity, starting positions, and CSS animation durations.
+  - Successfully mapped across all Authentication, Profile, and Dashboard pages for a unified visual experience.
 - Created a global `style.css` architecture at the project root, porting the entire B/W Glassmorphism design system to a single source of truth.
   - Eliminated inline styles from the `index.php` dashboard and adapted it to match the global glass aesthetics.
   - Deprecated and removed the localized `auth/style.css`.
