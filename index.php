@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 require_once __DIR__ . '/includes/db.php';
 
 // Fetch the latest user info and their chosen theme
-$stmt = $pdo->prepare("
+$stmt = $conn->prepare("
     SELECT u.email, u.role, u.photo, u.username, b.theme 
     FROM users u 
     LEFT JOIN biodata b ON u.user_id = b.user_id 

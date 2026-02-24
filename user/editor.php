@@ -11,12 +11,12 @@ if (!isset($_SESSION['user_id'])) {
 $user_id = $_SESSION['user_id'];
 
 // Fetch user data for the navbar
-$stmt = $pdo->prepare("SELECT email, username, photo FROM users WHERE user_id = ?");
+$stmt = $conn->prepare("SELECT email, username, photo FROM users WHERE user_id = ?");
 $stmt->execute([$user_id]);
 $user = $stmt->fetch();
 
 // Fetch existing biodata if any
-$stmt = $pdo->prepare("SELECT * FROM biodata WHERE user_id = ?");
+$stmt = $conn->prepare("SELECT * FROM biodata WHERE user_id = ?");
 $stmt->execute([$user_id]);
 $biodata = $stmt->fetch();
 
@@ -218,7 +218,7 @@ $socialLinks = ($biodata && $biodata['social_links']) ? $biodata['social_links']
             <?php endif; ?>
             <a href="profile.php">
                 <img src="<?php echo !empty($user['photo']) ? htmlspecialchars("../" . $user['photo']) : '../user-placeholder.png'; ?>"
-                alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid
+                    alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid
                 rgba(255,255,255,0.2);">
             </a>
         </div>

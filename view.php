@@ -9,7 +9,7 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
     $requested_username = trim($_GET['u']);
 
     // Fetch user and biodata based on username
-    $stmt = $pdo->prepare("
+    $stmt = $conn->prepare("
         SELECT u.photo, b.* 
         FROM users u
         LEFT JOIN biodata b ON u.user_id = b.user_id

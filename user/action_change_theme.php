@@ -43,16 +43,16 @@ if (!in_array($new_theme, $allowed_themes)) {
 
 try {
     // Check if the user already has a biodata row
-    $stmt = $pdo->prepare("SELECT user_id FROM biodata WHERE user_id = ?");
+    $stmt = $conn->prepare("SELECT user_id FROM biodata WHERE user_id = ?");
     $stmt->execute([$user_id]);
 
     if ($stmt->rowCount() > 0) {
         // Update the existing row's theme
-        $updateStmt = $pdo->prepare("UPDATE biodata SET theme = ? WHERE user_id = ?");
+        $updateStmt = $conn->prepare("UPDATE biodata SET theme = ? WHERE user_id = ?");
         $updateStmt->execute([$new_theme, $user_id]);
     } else {
         // Create a new blank biodata row specifically setting their theme
-        $insertStmt = $pdo->prepare("INSERT INTO biodata (user_id, theme, full_name, tagline, about_me, location, social_links, skills) 
+        $insertStmt = $conn->prepare("INSERT INTO biodata (user_id, theme, full_name, tagline, about_me, location, social_links, skills) 
                                      VALUES (?, ?, '', '', '', '', '{}', '[]')");
         $insertStmt->execute([$user_id, $new_theme]);
     }

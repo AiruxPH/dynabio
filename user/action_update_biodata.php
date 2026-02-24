@@ -53,12 +53,12 @@ try {
     // But since MySQL doesn't natively do upserts cleanly without knowing the keys perfectly, 
     // doing a SELECT first is safer for our custom architecture.
 
-    $stmt = $pdo->prepare("SELECT user_id FROM biodata WHERE user_id = ?");
+    $stmt = $conn->prepare("SELECT user_id FROM biodata WHERE user_id = ?");
     $stmt->execute([$user_id]);
 
     if ($stmt->rowCount() > 0) {
         // UPDATE existing row (Note: We do NOT update `theme` here, that's handled cleanly on the dashboard)
-        $updateStmt = $pdo->prepare("UPDATE biodata 
+        $updateStmt = $conn->prepare("UPDATE biodata 
                                      SET full_name = ?, tagline = ?, about_me = ?, location = ?, social_links = ?, skills = ? 
                                      WHERE user_id = ?");
         $updateStmt->execute([
@@ -72,7 +72,7 @@ try {
         ]);
     } else {
         // INSERT new row (Defaulting theme to 'default-glass')
-        $insertStmt = $pdo->prepare("INSERT INTO biodata 
+        $insertStmt = $conn->prepare("INSERT INTO biodata 
                                     (user_id, theme, full_name, tagline, about_me, location, social_links, skills) 
                                     VALUES (?, 'default-glass', ?, ?, ?, ?, ?, ?)");
         $insertStmt->execute([
