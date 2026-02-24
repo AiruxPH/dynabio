@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Created a global `style.css` architecture at the project root, porting the entire B/W Glassmorphism design system to a single source of truth.
+  - Eliminated inline styles from the `index.php` dashboard and adapted it to match the global glass aesthetics.
+  - Deprecated and removed the localized `auth/style.css`.
+  - Updated all dependent authentication and user profile pages to link natively to the root stylesheet.
 - OTP Verification Quality of Life updates:
   - Upgraded the `auth/verify.php` frontend to utilize a modern 6-box OTP entry interface in place of a generic text input. The inputs natively feature auto-advancing keystrokes, full-string pasting support, backspace navigation, and auto-submission upon entering the final digit.
   - Shortened the required authentication code length from 16 characters to 6 for better usability.
