@@ -261,7 +261,7 @@ if (isset($_SESSION['user_id'])) {
         });
 
         // Initialize Account Chooser
-        function loadRecentLogins() {
+        async function loadRecentLogins() {
             const stored = localStorage.getItem('recent_logins');
             let logins = [];
             if (stored) {
@@ -269,6 +269,25 @@ if (isset($_SESSION['user_id'])) {
                     logins = JSON.parse(stored);
                 } catch (e) {
                     logins = [];
+                }
+            }
+
+            // Synchronize with backend dynamically
+            if (logins.length > 0) {
+                try {
+                    const response = await fetch('action_sync_accounts.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ accounts: logins })
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        logins = data.synced_accounts;
+                        localStorage.setItem('recent_logins', JSON.stringify(logins));
+                    }
+                } catch (e) {
+                    console.error("Account sync failed", e);
                 }
             }
 
@@ -354,7 +373,7 @@ if (isset($_SESSION['user_id'])) {
             }
         }
 
-        function saveRecentLogin(username, avatar_url) {
+        function saveRecentLogin(user_id, username, avatar_url) {
             let logins = [];
             const stored = localStorage.getItem('recent_logins');
             if (stored) {
@@ -362,9 +381,10 @@ if (isset($_SESSION['user_id'])) {
             }
 
             // Remove existing entry if it exists to update it and move to top
-            logins = logins.filter(acc => acc.username !== username);
+            logins = logins.filter(acc => acc.username !== username && acc.user_id !== user_id);
 
             logins.unshift({
+                user_id: user_id,
                 username: username,
                 avatar_url: avatar_url,
                 last_login: Date.now()
@@ -420,7 +440,7 @@ if (isset($_SESSION['user_id'])) {
 
                     // Trigger Account Chooser Save Logic
                     if (remember && data.user) {
-                        saveRecentLogin(data.user.username, data.user.photo);
+                        saveRecentLogin(data.user.user_id, data.user.username, data.user.photo);
                     }
 
                     setTimeout(() => {

@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Real-Time Account Chooser Sync. `auth/login.php` now intercepts its `localStorage` on boot and passes it through an AJAX call to a new `auth/action_sync_accounts.php` endpoint. This guarantees that if a user changes their username or deletes their account on one device, their icon and login card on other devices will securely update or vanish instantly, preventing stale data.
 - Profile View & Edit Modes.
   - `user/profile.php` now features a protected `view-mode` by default, rendering inputs cleanly as flat text and protecting against accidental keystrokes.
   - Implemented 'Edit Profile' and 'Cancel' workflows in Javascript that toggle read-only states instantly and use HTML5 `dataset` attributes to gracefully reset text back to its original database value if editing is aborted.
