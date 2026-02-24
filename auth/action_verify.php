@@ -8,7 +8,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 $email = $data['email'] ?? '';
 $code = $data['code'] ?? '';
 
-if (empty($email) || empty($code) || strlen($code) !== 16) {
+if (empty($email) || empty($code) || strlen($code) !== 6) {
     jsonResponse(false, 'Invalid verification code format.');
 }
 
