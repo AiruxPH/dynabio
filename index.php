@@ -134,7 +134,12 @@ $roleName = ucfirst($user['role']);
 
     <nav class="navbar">
         <div class="navbar-brand">Dynabio</div>
-        <a href="auth/logout.php" class="logout-btn">Log out</a>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <a href="user/profile.php"
+                style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.875rem; transition: color 0.2s ease;">My
+                Profile</a>
+            <a href="auth/logout.php" class="logout-btn">Log out</a>
+        </div>
     </nav>
 
     <div class="container">
