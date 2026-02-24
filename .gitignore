@@ -13,8 +13,5 @@ Thumbs.db
 *.tmp
 *.log
 
-# Documentation
-*.md
-
 # Database
 *.sql

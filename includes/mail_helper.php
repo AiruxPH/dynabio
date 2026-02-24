@@ -58,6 +58,11 @@ function sendEmail($to, $subject, $body, $altBody = '')
         $mail->setFrom(MAIL_FROM, MAIL_FROM_NAME);
         $mail->addAddress($to);
 
+        // Prevent replies directly to the system inbox
+        $host = parse_url(ACTUAL_WEB_URL, PHP_URL_HOST);
+        $domain = $host ?: 'dynabio.com';
+        $mail->addReplyTo('noreply@' . $domain, 'No Reply');
+
         // Content
         $mail->isHTML(true);
         $mail->Subject = $subject;

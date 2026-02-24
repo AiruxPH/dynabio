@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Outgoing System Emails (OTPs, Verification) are now strictly unreplyable. `includes/mail_helper.php` was modified to explicitly inject a `Reply-To: noreply@dynabio.com` header to prevent users from flooding the system inbox.
 - Real-time Username Checking on `user/profile.php`.
   - Added visual `<small>` UI to inform users if a name is taken, available, or formatted incorrectly.
   - Generates lightweight, debounced `fetch()` checks against new `user/action_check_username.php` endpoint.
