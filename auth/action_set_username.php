@@ -4,11 +4,13 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth_utils.php';
 
-if (!isset($_SESSION['setup_user_id'])) {
+if (!isset($_SESSION['setup_user_id']) && !isset($_SESSION['user_id'])) {
     jsonResponse(false, 'Session expired. Please login.', 'login.php');
 }
 
-$user_id = $_SESSION['setup_user_id'];
+$is_setup_flow = isset($_SESSION['setup_user_id']);
+$user_id = $is_setup_flow ? $_SESSION['setup_user_id'] : $_SESSION['user_id'];
+
 $data = json_decode(file_get_contents('php://input'), true);
 
 $skip = $data['skip'] ?? false;
@@ -23,8 +25,12 @@ try {
         $update = $conn->prepare("UPDATE users SET username = ? WHERE user_id = ?");
         $update->execute([$generated_username, $user_id]);
 
-        unset($_SESSION['setup_user_id']);
-        jsonResponse(true, 'Username auto-generated! Redirecting to login...', 'login.php');
+        if ($is_setup_flow) {
+            unset($_SESSION['setup_user_id']);
+            jsonResponse(true, 'Username auto-generated! Redirecting to login...', 'login.php');
+        } else {
+            jsonResponse(true, 'Username auto-generated!', null);
+        }
     } else {
         if (empty($username)) {
             jsonResponse(false, 'Please enter a username or click skip.');
@@ -40,8 +46,12 @@ try {
         $update = $conn->prepare("UPDATE users SET username = ? WHERE user_id = ?");
         $update->execute([$username, $user_id]);
 
-        unset($_SESSION['setup_user_id']);
-        jsonResponse(true, 'Username saved! Redirecting to login...', 'login.php');
+        if ($is_setup_flow) {
+            unset($_SESSION['setup_user_id']);
+            jsonResponse(true, 'Username saved! Redirecting to login...', 'login.php');
+        } else {
+            jsonResponse(true, 'Username saved!', null);
+        }
     }
 } catch (Exception $e) {
     jsonResponse(false, 'Database error occurred: ' . $e->getMessage());

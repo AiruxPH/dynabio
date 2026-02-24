@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Global `includes/username_modal.php` dynamically prompting users without a username to set one or skip (with auto-generation). Applied to protected dashboard and profile pages.
+
+### Fixed
+- "Tracking Prevention blocked access" warnings on `user/profile.php` by adding `crossorigin` and `referrerpolicy` to the local FontAwesome CDN link.
+
+### Changed
+- `auth/action_set_username.php` updated to handle username assignments for both setup-flow users and existing-session users without forcing login redirects.
+
+### Added
 - `user/profile.php` and `user/action_profile.php` for user profile management (username, role display, avatar uploading, account soft-deletion).
 - `auth/set_username.php` and `auth/action_set_username.php` to handle new user handle assignments post-signup.
 - Implemented a 60-second countdown timer for resending verification codes in `auth/verify.php`.

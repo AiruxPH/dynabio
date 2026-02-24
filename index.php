@@ -154,6 +154,7 @@ $roleName = ucfirst($user['role']);
         </div>
     </div>
 
+    <?php include __DIR__ . '/includes/username_modal.php'; ?>
 </body>
 
 </html>
