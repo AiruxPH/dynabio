@@ -48,6 +48,7 @@ All notable changes to this project will be documented in this file.
 - "Tracking Prevention blocked access" warnings on `user/profile.php` by adding `crossorigin` and `referrerpolicy` to the local FontAwesome CDN link.
 
 ### Changed
+- Replaced the FontAwesome `cdnjs` stylesheet link with a personalized Font Awesome Kit script globally across all authentication, dashboard, and profile pages. This definitively resolves browser "Tracking Prevention" errors and standardizes asset loading.
 - `auth/action_set_username.php` updated to handle username assignments for both setup-flow users and existing-session users without forcing login redirects.
 
 ### Added
