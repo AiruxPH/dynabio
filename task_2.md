@@ -1,3 +1,5 @@
+[DONE]
+
 Feature Spec: Persistent Account Chooser (Recent Logins)
 1. Overview
 The Account Chooser (or Account Switcher) is a UX enhancement designed to streamline the authentication process for returning users. Instead of requiring a full manual login (Email/Username entry) every session, the application will display a list of profiles that have successfully authenticated on the current browser.
