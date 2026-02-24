@@ -12,3 +12,9 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.log
+
+# Documentation
+*.md
+
+# Database
+*.sql
