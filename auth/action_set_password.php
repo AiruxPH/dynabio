@@ -17,6 +17,10 @@ if (strlen($password) < 8) {
     jsonResponse(false, 'Password must be at least 8 characters long.');
 }
 
+if (!preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password) || !preg_match('/[^A-Za-z0-9]/', $password)) {
+    jsonResponse(false, 'Password does not meet the requirements.');
+}
+
 try {
     // Determine flow based on existing password
     $stmt = $conn->prepare("SELECT user_id, password FROM users WHERE email = ?");

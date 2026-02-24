@@ -55,9 +55,11 @@ try {
     $_SESSION['role'] = $user['role'];
 
     // If remember me is checked, extend the session cookie lifetime
+    $params = session_get_cookie_params();
     if ($remember) {
-        $params = session_get_cookie_params();
         setcookie(session_name(), session_id(), time() + (86400 * 30), $params["path"], $params["domain"], $params["secure"], $params["httponly"]); // 30 days
+    } else {
+        setcookie(session_name(), session_id(), 0, $params["path"], $params["domain"], $params["secure"], $params["httponly"]); // 0 means session expires when browser closes
     }
 
     jsonResponse(true, 'Login successful!', '../index.php');
