@@ -228,9 +228,16 @@ if (isset($_SESSION['user_id'])) {
             </button>
         </form>
 
+
         <div class="auth-footer" id="authFooter">
             Don't have an account? <a href="signup.php">Create one</a>
         </div>
+
+        <!-- Back to Chooser Button (Hidden by default) -->
+        <button id="backToChooserBtn" class="btn"
+            style="display: none; margin-top: 1rem; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #cbd5e1;">
+            <i class="fas fa-arrow-left" style="margin-right: 8px;"></i> Back to Accounts
+        </button>
     </div>
 
     <script>
@@ -248,9 +255,11 @@ if (isset($_SESSION['user_id'])) {
         const changeAccountBtn = document.getElementById('changeAccountBtn');
         const identifierGroup = document.getElementById('identifierGroup');
         const authFooter = document.getElementById('authFooter');
+        const backToChooserBtn = document.getElementById('backToChooserBtn');
 
         // State
         let selectedUsername = null;
+        let globalLoginsCache = [];
 
         // Toggle Password Visibility
         togglePasswordBtn.addEventListener('click', function () {
@@ -291,10 +300,13 @@ if (isset($_SESSION['user_id'])) {
                 }
             }
 
+            globalLoginsCache = logins; // Store for the standard login view
+
             if (logins.length > 0) {
                 accountChooser.style.display = 'block';
                 loginForm.style.display = 'none';
                 authFooter.style.display = 'none';
+                backToChooserBtn.style.display = 'none';
 
                 accountList.innerHTML = '';
                 logins.forEach(account => {
@@ -341,6 +353,7 @@ if (isset($_SESSION['user_id'])) {
             accountChooser.style.display = 'none';
             loginForm.style.display = 'block';
             authFooter.style.display = 'none'; // Keep hidden during quick-login
+            backToChooserBtn.style.display = 'flex'; // Allow them to go back to the chooser
 
             identifierGroup.style.display = 'none'; // Hide normal email input
             activeAccountPreview.style.display = 'flex';
@@ -358,6 +371,13 @@ if (isset($_SESSION['user_id'])) {
             accountChooser.style.display = 'none';
             loginForm.style.display = 'block';
             authFooter.style.display = 'block';
+
+            // Only show back button if there are accounts they can go back to
+            if (globalLoginsCache.length > 0) {
+                backToChooserBtn.style.display = 'flex';
+            } else {
+                backToChooserBtn.style.display = 'none';
+            }
 
             identifierGroup.style.display = 'block';
             activeAccountPreview.style.display = 'none';
@@ -401,6 +421,11 @@ if (isset($_SESSION['user_id'])) {
         // Event Listeners for UI switching
         useAnotherAccountBtn.addEventListener('click', showStandardLogin);
         changeAccountBtn.addEventListener('click', () => {
+            emailInput.value = '';
+            passwordInput.value = '';
+            loadRecentLogins();
+        });
+        backToChooserBtn.addEventListener('click', () => {
             emailInput.value = '';
             passwordInput.value = '';
             loadRecentLogins();
