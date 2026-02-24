@@ -143,7 +143,7 @@ if (!isset($_SESSION['verified_email'])) {
                 </div>
             </div>
 
-            <button type="submit" id="submitBtn" class="btn">
+            <button type="submit" id="submitBtn" class="btn btn-primary">
                 <span id="btnText">Save Password & Login</span>
             </button>
         </form>

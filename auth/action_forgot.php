@@ -15,10 +15,8 @@ try {
     $stmt->execute([$email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Don't reveal if email doesn't exist for security. Just act like we sent it or show a generic message.
-    // However, since it's an internal app, we can be helpful.
     if (!$user) {
-        jsonResponse(false, 'No account found with that email address.');
+        jsonResponse(false, 'This email is not found or does not have an account affiliated with it.');
     }
 
     if ($user['is_verified'] == 0) {

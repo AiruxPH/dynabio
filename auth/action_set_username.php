@@ -1,0 +1,49 @@
+<?php
+session_start();
+header('Content-Type: application/json');
+require_once __DIR__ . '/../includes/db.php';
+require_once __DIR__ . '/../includes/auth_utils.php';
+
+if (!isset($_SESSION['setup_user_id'])) {
+    jsonResponse(false, 'Session expired. Please login.', 'login.php');
+}
+
+$user_id = $_SESSION['setup_user_id'];
+$data = json_decode(file_get_contents('php://input'), true);
+
+$skip = $data['skip'] ?? false;
+$username = trim($data['username'] ?? '');
+
+try {
+    if ($skip) {
+        // Generate formatting: "User_" + (000000 + user_id)
+        $padded_id = str_pad($user_id, 6, "0", STR_PAD_LEFT);
+        $generated_username = "User_" . $padded_id;
+
+        $update = $conn->prepare("UPDATE users SET username = ? WHERE user_id = ?");
+        $update->execute([$generated_username, $user_id]);
+
+        unset($_SESSION['setup_user_id']);
+        jsonResponse(true, 'Username auto-generated! Redirecting to login...', 'login.php');
+    } else {
+        if (empty($username)) {
+            jsonResponse(false, 'Please enter a username or click skip.');
+        }
+
+        // Optional: Check if username already exists
+        $check = $conn->prepare("SELECT user_id FROM users WHERE username = ?");
+        $check->execute([$username]);
+        if ($check->fetch()) {
+            jsonResponse(false, 'This username is already taken. Please choose another.');
+        }
+
+        $update = $conn->prepare("UPDATE users SET username = ? WHERE user_id = ?");
+        $update->execute([$username, $user_id]);
+
+        unset($_SESSION['setup_user_id']);
+        jsonResponse(true, 'Username saved! Redirecting to login...', 'login.php');
+    }
+} catch (Exception $e) {
+    jsonResponse(false, 'Database error occurred: ' . $e->getMessage());
+}
+?>

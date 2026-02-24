@@ -44,8 +44,9 @@ try {
     unset($_SESSION['verified_email']);
 
     if ($isSignupFlow) {
-        // "if the passwords match, the user will be registered and will be redirected to the login page"
-        jsonResponse(true, 'Account registered successfully! Redirecting to login...', 'login.php');
+        // "After the user signs-up, will be redirected to a page where to set a username"
+        $_SESSION['setup_user_id'] = $user['user_id'];
+        jsonResponse(true, 'Account registered successfully! Redirecting to setup...', 'set_username.php');
     } else {
         // Forgot password flow: "if the new passwords match, the user will be logged in"
         $_SESSION['user_id'] = $user['user_id'];

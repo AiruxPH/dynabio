@@ -37,25 +37,97 @@ if (empty($email)) {
                     minlength="16" maxlength="16" autocomplete="off" style="letter-spacing: 2px; text-align: center;">
             </div>
 
-            <button type="submit" id="submitBtn" class="btn">
+            <button type="submit" id="submitBtn" class="btn btn-primary">
                 <span id="btnText">Verify & Continue</span>
             </button>
         </form>
 
-        <div class="auth-footer">
-            Didn't receive the code? <br><a href="signup.php" style="margin-top: 5px; display: inline-block;">Try
-                signing up again</a>
+        <div style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+            <button type="button" id="resendBtn" class="btn" style="background: rgba(255,255,255,0.05); color: #94a3b8;"
+                disabled>
+                Resend Code (60s)
+            </button>
+            <a href="signup.php" class="btn"
+                style="text-align: center; background: rgba(255,255,255,0.05); color: #cbd5e1; text-decoration: none; border: 1px solid rgba(255,255,255,0.1);">
+                Change Email Address
+            </a>
+        </div>
+
+        <div class="auth-footer" style="margin-top: 1.5rem;">
+            <a href="login.php"
+                style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; text-decoration: none; color: #94a3b8;">
+                <i class="fas fa-arrow-left"></i> Back to login
+            </a>
         </div>
     </div>
 
     <script>
+        // Timer Logic
+        let timer = 60;
+        const resendBtn = document.getElementById('resendBtn');
+        const email = document.getElementById('email').value;
+        const alertBox = document.getElementById('alertBox');
+
+        function startTimer() {
+            resendBtn.disabled = true;
+            timer = 60;
+            const interval = setInterval(() => {
+                timer--;
+                resendBtn.textContent = `Resend Code (${timer}s)`;
+                if (timer <= 0) {
+                    clearInterval(interval);
+                    resendBtn.disabled = false;
+                    resendBtn.textContent = 'Resend Code';
+                    resendBtn.style.color = '#ffffff';
+                }
+            }, 1000);
+        }
+
+        // Start initial timer
+        startTimer();
+
+        resendBtn.addEventListener('click', async () => {
+            if (timer > 0) return;
+
+            resendBtn.disabled = true;
+            resendBtn.innerHTML = '<span class="spinner"></span> Sending...';
+
+            try {
+                const response = await fetch('action_signup.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alertBox.textContent = "New verification code sent!";
+                    alertBox.className = 'alert alert-success';
+                    alertBox.style.display = 'block';
+                    startTimer();
+                } else {
+                    alertBox.textContent = data.message;
+                    alertBox.className = 'alert alert-danger';
+                    alertBox.style.display = 'block';
+                    resendBtn.disabled = false;
+                    resendBtn.textContent = 'Resend Code';
+                }
+            } catch (err) {
+                alertBox.textContent = "Failed to resend. Check your connection.";
+                alertBox.className = 'alert alert-danger';
+                alertBox.style.display = 'block';
+                resendBtn.disabled = false;
+                resendBtn.textContent = 'Resend Code';
+            }
+        });
+
+        // Verify Form Logic
         document.getElementById('verifyForm').addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            const email = document.getElementById('email').value;
             const code = document.getElementById('code').value;
             const submitBtn = document.getElementById('submitBtn');
-            const alertBox = document.getElementById('alertBox');
 
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner"></span> Verifying...';

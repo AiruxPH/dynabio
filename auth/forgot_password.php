@@ -25,7 +25,7 @@
                 <input type="email" id="email" class="form-control" placeholder="you@example.com" required>
             </div>
 
-            <button type="submit" id="submitBtn" class="btn">
+            <button type="submit" id="submitBtn" class="btn btn-primary">
                 <span id="btnText">Send Recovery Code</span>
             </button>
         </form>

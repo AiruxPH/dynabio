@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- `user/profile.php` and `user/action_profile.php` for user profile management (username, role display, avatar uploading, account soft-deletion).
+- `auth/set_username.php` and `auth/action_set_username.php` to handle new user handle assignments post-signup.
+- Implemented a 60-second countdown timer for resending verification codes in `auth/verify.php`.
+- Added "Change Email Address" redirect mechanism during verification in `auth/verify.php`.
+- B/W Glassmorphism design system in `auth/style.css` matching specific brand aesthetics, complete with hover-color emissions on primary actions.
+
+### Fixed
+- Input autofill styling in `auth/login.php` breaking the new UI (replaced native blue background with a transparent inset shadow).
+- Improved missing email error handling in `auth/action_forgot.php` to be more descriptive.
+
+### Changed
 - `includes/config.php` to store database and email credentials securely (added to `.gitignore`).
 - `includes/config.php.example` as a template for database and email configuration.
 - `.gitignore` to prevent sensitive files from being committed.

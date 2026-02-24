@@ -27,9 +27,11 @@ if (isset($_SESSION['user_id'])) {
         input:-webkit-autofill:hover,
         input:-webkit-autofill:focus,
         input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 30px #1e293b inset !important;
-            -webkit-text-fill-color: #f8fafc !important;
+            -webkit-box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.05) inset !important;
+            -webkit-text-fill-color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
             transition: background-color 5000s ease-in-out 0s;
+            border-radius: 8px;
         }
 
         /* Password wrapper */
@@ -73,14 +75,14 @@ if (isset($_SESSION['user_id'])) {
             <div class="form-group">
                 <label for="email">Email Address</label>
                 <input type="email" id="email" class="form-control" placeholder="you@example.com" required
-                    autocomplete="off">
+                    autocomplete="new-password">
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
                 <div class="password-wrapper">
                     <input type="password" id="password" class="form-control" placeholder="••••••••" required
-                        autocomplete="off">
+                        autocomplete="new-password">
                     <i class="fas fa-eye-slash toggle-password" id="togglePasswordBtn"></i>
                 </div>
             </div>
@@ -96,7 +98,7 @@ if (isset($_SESSION['user_id'])) {
                     Password?</a>
             </div>
 
-            <button type="submit" id="submitBtn" class="btn">
+            <button type="submit" id="submitBtn" class="btn btn-primary">
                 <span id="btnText">Log in</span>
             </button>
         </form>
