@@ -1,3 +1,7 @@
+<?php
+session_start();
+$isLoggedIn = isset($_SESSION['user_id']);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -31,7 +35,11 @@
         </form>
 
         <div class="auth-footer">
-            Remembered your password? <a href="login.php">Log in</a>
+            <?php if ($isLoggedIn): ?>
+                <a href="../user/profile.php">Back to Profile</a>
+            <?php else: ?>
+                Remembered your password? <a href="login.php">Log in</a>
+            <?php endif; ?>
         </div>
     </div>
 
