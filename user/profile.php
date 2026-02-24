@@ -120,10 +120,12 @@ if (!$user) {
         </div>
 
         <form id="profileForm">
-            <div class="form-group">
+            <div class="form-group" style="position: relative;">
                 <label for="username">Username</label>
                 <input type="text" id="username" class="form-control"
                     value="<?php echo htmlspecialchars($user['username']); ?>" required>
+                <span id="usernameWarning"
+                    style="font-size: 0.8rem; color: #94a3b8; display: block; margin-top: 0.25rem; min-height: 1rem;"></span>
             </div>
 
             <div class="form-group">
@@ -267,6 +269,82 @@ if (!$user) {
     <script src="../js/form_guards.js"></script>
     <script>
         const profileGuard = new FormGuard('profileForm', 'saveBtn');
+
+        // Live Username Validation
+        const usernameInput = document.getElementById('username');
+        const usernameWarning = document.getElementById('usernameWarning');
+        const saveBtn = document.getElementById('saveBtn');
+        const originalUsername = usernameInput.value;
+        const reservedWords = ['admin', 'support', 'help', 'root', 'api', 'login', 'signup', 'settings', 'dashboard', 'system', 'staff', 'mod', 'owner', 'blog', 'about', 'contact', 'null', 'undefined'];
+        const usernameRegex = /^[a-zA-Z0-9](_(?!_)|[a-zA-Z0-9]){2,18}[a-zA-Z0-9]$/;
+        let debounceTimer;
+
+        usernameInput.addEventListener('input', (e) => {
+            clearTimeout(debounceTimer);
+
+            let val = e.target.value;
+            usernameWarning.style.color = '#f87171'; // Default red
+
+            // Force lowercase
+            if (val !== val.toLowerCase()) {
+                val = val.toLowerCase();
+                e.target.value = val;
+            }
+
+            if (val === originalUsername) {
+                usernameWarning.textContent = '';
+                saveBtn.disabled = false;
+                return;
+            }
+
+            if (val.length === 0) {
+                usernameWarning.textContent = 'Username is required.';
+                saveBtn.disabled = true;
+                return;
+            }
+
+            if (reservedWords.includes(val)) {
+                usernameWarning.textContent = 'This username is reserved and cannot be used.';
+                saveBtn.disabled = true;
+                return;
+            }
+
+            if (!usernameRegex.test(val)) {
+                usernameWarning.textContent = '4-20 chars, alphanumeric or single underscores, cannot start/end with underscore.';
+                saveBtn.disabled = true;
+                return;
+            }
+
+            // Client checks passed, show loading indicator
+            usernameWarning.style.color = '#94a3b8';
+            usernameWarning.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Checking availability...';
+            saveBtn.disabled = true;
+
+            // Debounced AJAX Request
+            debounceTimer = setTimeout(async () => {
+                try {
+                    const response = await fetch('action_check_username.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: val })
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        usernameWarning.style.color = '#4ade80';
+                        usernameWarning.innerHTML = '<i class="fas fa-check-circle"></i> ' + data.message;
+                        saveBtn.disabled = false;
+                    } else {
+                        usernameWarning.style.color = '#f87171';
+                        usernameWarning.innerHTML = '<i class="fas fa-times-circle"></i> ' + data.message;
+                        saveBtn.disabled = true;
+                    }
+                } catch (error) {
+                    usernameWarning.style.color = '#f87171';
+                    usernameWarning.textContent = 'Error checking username.';
+                }
+            }, 600); // 600ms delay
+        });
     </script>
     <?php include __DIR__ . '/../includes/username_modal.php'; ?>
 </body>

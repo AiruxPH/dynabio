@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Real-time Username Checking on `user/profile.php`.
+  - Added visual `<small>` UI to inform users if a name is taken, available, or formatted incorrectly.
+  - Generates lightweight, debounced `fetch()` checks against new `user/action_check_username.php` endpoint.
+  - Dynamically disables/enables the Profile save button depending on full validity.
+- Strict Backend Username Validation enforced on `user/action_profile.php`. Stops manipulation of usernames by ensuring regex match, correct string length, strict lowercase transformation, and rejection of system reserved words.
 - Global `js/form_guards.js` utility class constructed to provide offline submission blocking and native browser unsaved-changes warnings (`beforeunload`).
   - Integrated into `user/profile.php` to prevent catastrophic data loss if users navigate away with a dirty form.
   - Intercepts offline events dynamically, disabling submit buttons globally to prevent hanging requests.
