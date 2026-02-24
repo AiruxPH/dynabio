@@ -79,6 +79,6 @@
 
 ### 6.1. Design Renovation to B/W Glassmorphism (UPGRADE)
 
-### 6.2. Buttons will  emit different colors when hovered according to the type of button. (UPGRADE)
+### 6.2. Buttons and other elements will emit different colors when hovered according to the type of button/element. (UPGRADE)
 
 # NOTE: CHECK DATABASE FIRST BEFORE DOING ANYTHING. I WANT TO SEE THE DATABASE STRUCTURE FIRST.
