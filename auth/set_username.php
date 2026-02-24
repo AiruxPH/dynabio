@@ -41,7 +41,7 @@ if (!isset($_SESSION['setup_user_id'])) {
         <form id="usernameForm">
             <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" id="username" class="form-control" placeholder="e.g. johndoe99" required
+                <input type="text" id="username" class="form-control" placeholder="Enter you username here..." required
                     autocomplete="off">
             </div>
             <button type="submit" id="submitBtn" class="btn btn-primary">

@@ -111,7 +111,7 @@ if (!isset($_SESSION['verified_email'])) {
             <div class="form-group">
                 <label for="password">New Password</label>
                 <div class="password-wrapper">
-                    <input type="password" id="password" class="form-control" placeholder="Minimum 8 characters"
+                    <input type="password" id="password" class="form-control" placeholder="Enter your password here..."
                         required minlength="8" autocomplete="off">
                     <i class="fas fa-eye-slash toggle-password" id="togglePasswordBtn"></i>
                 </div>
@@ -137,8 +137,8 @@ if (!isset($_SESSION['verified_email'])) {
             <div class="form-group">
                 <label for="confirm_password">Confirm Password</label>
                 <div class="password-wrapper">
-                    <input type="password" id="confirm_password" class="form-control" placeholder="Re-type password"
-                        required minlength="8" autocomplete="off">
+                    <input type="password" id="confirm_password" class="form-control"
+                        placeholder="Re-type your password..." required minlength="8" autocomplete="off">
                     <i class="fas fa-eye-slash toggle-password" id="toggleConfirmPasswordBtn"></i>
                 </div>
             </div>

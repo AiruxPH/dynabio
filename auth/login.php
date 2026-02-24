@@ -199,8 +199,8 @@ if (isset($_SESSION['user_id'])) {
 
             <div class="form-group" id="identifierGroup">
                 <label for="email">Email Address or Username</label>
-                <input type="text" id="email" class="form-control" placeholder="you@example.com or username" required
-                    autocomplete="username">
+                <input type="text" id="email" class="form-control" placeholder="Enter your email or username..."
+                    required autocomplete="username">
             </div>
 
             <div class="form-group">

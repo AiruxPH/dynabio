@@ -26,7 +26,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
         <form id="forgotForm">
             <div class="form-group">
                 <label for="email">Email Address</label>
-                <input type="email" id="email" class="form-control" placeholder="you@example.com" required>
+                <input type="email" id="email" class="form-control" placeholder="Enter your email here..." required>
             </div>
 
             <button type="submit" id="submitBtn" class="btn btn-primary">

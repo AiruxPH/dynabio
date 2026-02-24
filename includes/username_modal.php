@@ -132,7 +132,7 @@ if (isset($user) && empty($user['username'])):
 
             <div id="usernameModalAlert" class="username-modal-alert"></div>
 
-            <input type="text" id="usernameModalInput" class="username-modal-input" placeholder="e.g. cyberninja99"
+            <input type="text" id="usernameModalInput" class="username-modal-input" placeholder="Set your username..."
                 autocomplete="off">
             <span id="usernameModalWarning" class="username-modal-validation-warning"></span>
 
