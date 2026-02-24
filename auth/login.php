@@ -58,6 +58,112 @@ if (isset($_SESSION['user_id'])) {
         .toggle-password:hover {
             color: #cbd5e1;
         }
+
+        /* Account Chooser Styles */
+        .account-chooser {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .account-card {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .account-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(59, 130, 246, 0.5);
+            transform: translateY(-2px);
+        }
+
+        .account-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .account-info {
+            flex: 1;
+            text-align: left;
+        }
+
+        .account-name {
+            font-weight: 600;
+            color: #f8fafc;
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
+        }
+
+        .account-remove {
+            position: absolute;
+            right: 1rem;
+            color: #64748b;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+
+        .account-remove:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        /* Active Account Preview (When selected) */
+        .active-account-preview {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(59, 130, 246, 0.05);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            justify-content: center;
+        }
+
+        .active-account-preview img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #3b82f6;
+        }
+
+        .active-account-preview .name {
+            font-weight: 600;
+            color: #f8fafc;
+        }
+
+        .active-account-preview .change-btn {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #94a3b8;
+            padding: 0.25rem 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            margin-left: auto;
+            transition: all 0.2s ease;
+        }
+
+        .active-account-preview .change-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #f8fafc;
+        }
     </style>
 </head>
 
@@ -71,8 +177,27 @@ if (isset($_SESSION['user_id'])) {
 
         <div id="alertBox" class="alert" style="display: none;"></div>
 
+        <!-- Account Chooser Interface -->
+        <div id="accountChooser" style="display: none;">
+            <div class="account-chooser" id="accountList">
+                <!-- Dynamically populated cards go here -->
+            </div>
+            <button id="useAnotherAccountBtn" class="btn"
+                style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #cbd5e1;">
+                <i class="fas fa-user-plus" style="margin-right: 8px;"></i> Use another account
+            </button>
+        </div>
+
+        <!-- Standard Login Form -->
         <form id="loginForm">
-            <div class="form-group">
+            <!-- Selected Account Banner -->
+            <div id="activeAccountPreview" class="active-account-preview" style="display: none;">
+                <img src="" id="activeAccountImg" alt="Avatar">
+                <span class="name" id="activeAccountName"></span>
+                <button type="button" class="change-btn" id="changeAccountBtn">Change</button>
+            </div>
+
+            <div class="form-group" id="identifierGroup">
                 <label for="email">Email Address or Username</label>
                 <input type="text" id="email" class="form-control" placeholder="you@example.com or username" required
                     autocomplete="username">
@@ -103,16 +228,31 @@ if (isset($_SESSION['user_id'])) {
             </button>
         </form>
 
-        <div class="auth-footer">
+        <div class="auth-footer" id="authFooter">
             Don't have an account? <a href="signup.php">Create one</a>
         </div>
     </div>
 
     <script>
-        // Toggle Password Visibility
+        // DOM Elements
         const togglePasswordBtn = document.getElementById('togglePasswordBtn');
         const passwordInput = document.getElementById('password');
+        const loginForm = document.getElementById('loginForm');
+        const emailInput = document.getElementById('email');
+        const accountChooser = document.getElementById('accountChooser');
+        const accountList = document.getElementById('accountList');
+        const useAnotherAccountBtn = document.getElementById('useAnotherAccountBtn');
+        const activeAccountPreview = document.getElementById('activeAccountPreview');
+        const activeAccountImg = document.getElementById('activeAccountImg');
+        const activeAccountName = document.getElementById('activeAccountName');
+        const changeAccountBtn = document.getElementById('changeAccountBtn');
+        const identifierGroup = document.getElementById('identifierGroup');
+        const authFooter = document.getElementById('authFooter');
+        
+        // State
+        let selectedUsername = null;
 
+        // Toggle Password Visibility
         togglePasswordBtn.addEventListener('click', function () {
             const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
             passwordInput.setAttribute('type', type);
@@ -120,11 +260,139 @@ if (isset($_SESSION['user_id'])) {
             this.classList.toggle('fa-eye-slash');
         });
 
-        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+        // Initialize Account Chooser
+        function loadRecentLogins() {
+            const stored = localStorage.getItem('recent_logins');
+            let logins = [];
+            if (stored) {
+                try {
+                    logins = JSON.parse(stored);
+                } catch (e) {
+                    logins = [];
+                }
+            }
+
+            if (logins.length > 0) {
+                accountChooser.style.display = 'block';
+                loginForm.style.display = 'none';
+                authFooter.style.display = 'none';
+                
+                accountList.innerHTML = '';
+                logins.forEach(account => {
+                    const card = document.createElement('div');
+                    card.className = 'account-card';
+                    card.innerHTML = `
+                        <img src="../${account.avatar_url}" alt="${account.username}" class="account-avatar" onerror="this.src='../images/default.png'">
+                        <div class="account-info">
+                            <div class="account-name">${account.username}</div>
+                        </div>
+                        <button class="account-remove" title="Remove account" data-username="${account.username}">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    
+                    // Card click
+                    card.addEventListener('click', (e) => {
+                        // Ignore if clicked on remove button
+                        if (e.target.closest('.account-remove')) return;
+                        selectAccount(account);
+                    });
+                    
+                    // Remove click
+                    const removeBtn = card.querySelector('.account-remove');
+                    removeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        removeRecentLogin(account.username);
+                    });
+
+                    accountList.appendChild(card);
+                });
+            } else {
+                showStandardLogin();
+            }
+        }
+
+        function selectAccount(account) {
+            selectedUsername = account.username;
+            emailInput.value = account.username; // Auto-fill internally
+            
+            // UI Transitions
+            accountChooser.style.display = 'none';
+            loginForm.style.display = 'block';
+            authFooter.style.display = 'none'; // Keep hidden during quick-login
+            
+            identifierGroup.style.display = 'none'; // Hide normal email input
+            activeAccountPreview.style.display = 'flex';
+            
+            activeAccountImg.src = '../' + account.avatar_url;
+            activeAccountName.textContent = account.username;
+            
+            passwordInput.focus();
+        }
+
+        function showStandardLogin() {
+            selectedUsername = null;
+            emailInput.value = '';
+            
+            accountChooser.style.display = 'none';
+            loginForm.style.display = 'block';
+            authFooter.style.display = 'block';
+            
+            identifierGroup.style.display = 'block';
+            activeAccountPreview.style.display = 'none';
+        }
+
+        function removeRecentLogin(username) {
+            let stored = localStorage.getItem('recent_logins');
+            if (stored) {
+                let logins = JSON.parse(stored);
+                logins = logins.filter(acc => acc.username !== username);
+                localStorage.setItem('recent_logins', JSON.stringify(logins));
+                loadRecentLogins();
+            }
+        }
+
+        function saveRecentLogin(username, avatar_url) {
+            let logins = [];
+            const stored = localStorage.getItem('recent_logins');
+            if (stored) {
+                try { logins = JSON.parse(stored); } catch (e) {}
+            }
+            
+            // Remove existing entry if it exists to update it and move to top
+            logins = logins.filter(acc => acc.username !== username);
+            
+            logins.unshift({
+                username: username,
+                avatar_url: avatar_url,
+                last_login: Date.now()
+            });
+
+            // Cap at 5 accounts
+            if (logins.length > 5) {
+                logins = logins.slice(0, 5);
+            }
+
+            localStorage.setItem('recent_logins', JSON.stringify(logins));
+        }
+
+        // Event Listeners for UI switching
+        useAnotherAccountBtn.addEventListener('click', showStandardLogin);
+        changeAccountBtn.addEventListener('click', () => {
+            emailInput.value = '';
+            passwordInput.value = '';
+            loadRecentLogins();
+        });
+
+        // Initialize on load
+        loadRecentLogins();
+
+        loginForm.addEventListener('submit', async function (e) {
             e.preventDefault();
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            // If selectedUsername is set, we use that, otherwise we use whatever they typed
+            const email = selectedUsername ? selectedUsername : emailInput.value;
+            const password = passwordInput.value;
             const remember = document.getElementById('remember').checked;
             const submitBtn = document.getElementById('submitBtn');
             const alertBox = document.getElementById('alertBox');
@@ -147,6 +415,11 @@ if (isset($_SESSION['user_id'])) {
                     alertBox.textContent = data.message;
                     alertBox.classList.add('alert-success');
                     alertBox.style.display = 'block';
+                    
+                    // Trigger Account Chooser Save Logic
+                    if (remember && data.user) {
+                        saveRecentLogin(data.user.username, data.user.photo);
+                    }
 
                     setTimeout(() => {
                         window.location.href = data.redirect || '../index.php'; // Default redirect

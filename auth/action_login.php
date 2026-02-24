@@ -62,7 +62,17 @@ try {
         setcookie(session_name(), session_id(), 0, $params["path"], $params["domain"], $params["secure"], $params["httponly"]); // 0 means session expires when browser closes
     }
 
-    jsonResponse(true, 'Login successful!', '../index.php');
+    $response_data = [
+        'success' => true,
+        'message' => 'Login successful!',
+        'redirect' => '../index.php',
+        'user' => [
+            'username' => $user['username'],
+            'photo' => $user['photo']
+        ]
+    ];
+    echo json_encode($response_data);
+    exit;
 
 } catch (Exception $e) {
     jsonResponse(false, 'Database error occurred: ' . $e->getMessage());

@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- Persistent "Account Chooser" feature in `auth/login.php` to streamline authentication for returning users on trusted devices.
+  - Utilizes `localStorage` to securely save up to 5 recent usernames and avatars, exclusively trigged by the "Remember me" checkbox.
+  - Implements a Google-style "Active Account Preview" banner that hides the username input when returning from a quick-login card.
 - Username login support alongside Email. Modifed `login.php` to accept both formats visually and fundamentally via `action_login.php`.
 - Database trigger SQL script (`database/username_trigger.txt`) explicitly providing safeguards against duplicate usernames across the `users` table via `BEFORE INSERT` and `BEFORE UPDATE` logic.
 - Comprehensive local (frontend) and strict remote (backend) validation ensuring usernames:
