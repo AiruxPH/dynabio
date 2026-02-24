@@ -72,12 +72,15 @@ if (!$user) {
             display: none !important;
         }
 
+        .view-mode .form-control[readonly] {
+            background: rgba(255, 255, 255, 0.02) !important;
+            border-color: rgba(255, 255, 255, 0.1) !important;
+            color: #94a3b8 !important;
+        }
+
         .view-mode .form-control:not([readonly]) {
-            background: transparent;
-            border-color: transparent;
             pointer-events: none;
             color: #f8fafc;
-            padding-left: 0;
         }
 
         .avatar-upload-btn:hover {
@@ -136,7 +139,7 @@ if (!$user) {
             <div class="form-group" style="position: relative;">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" class="form-control"
-                    value="<?php echo htmlspecialchars($user['username']); ?>" 
+                    value="<?php echo htmlspecialchars($user['username']); ?>"
                     data-original="<?php echo htmlspecialchars($user['username']); ?>" required>
                 <span id="usernameWarning"
                     style="font-size: 0.8rem; color: #94a3b8; display: block; margin-top: 0.25rem; min-height: 1rem;"></span>
@@ -146,7 +149,7 @@ if (!$user) {
                 <label for="email">Email Address</label>
                 <!-- Email is usually readonly or requires a complex flow to change -->
                 <input type="email" id="email" name="email" class="form-control"
-                    value="<?php echo htmlspecialchars($user['email']); ?>" 
+                    value="<?php echo htmlspecialchars($user['email']); ?>"
                     data-original="<?php echo htmlspecialchars($user['email']); ?>" readonly
                     style="background: rgba(255,255,255,0.02); color: #94a3b8; cursor: not-allowed;">
             </div>
@@ -154,7 +157,7 @@ if (!$user) {
             <div class="form-group">
                 <label for="role">Account Role</label>
                 <input type="text" id="role" name="role" class="form-control"
-                    value="<?php echo ucfirst(htmlspecialchars($user['role'])); ?>" 
+                    value="<?php echo ucfirst(htmlspecialchars($user['role'])); ?>"
                     data-original="<?php echo ucfirst(htmlspecialchars($user['role'])); ?>" readonly
                     style="background: rgba(255,255,255,0.02); color: #94a3b8; cursor: not-allowed; text-transform: capitalize;">
             </div>
@@ -317,7 +320,10 @@ if (!$user) {
             profileContainer.classList.remove('view-mode');
             viewActions.style.display = 'none';
             editActions.style.display = 'flex';
-            if (usernameInput) usernameInput.focus();
+
+            // Re-fetch the input since it might not be initialized globally in this block
+            const uInput = document.getElementById('username');
+            if (uInput) uInput.focus();
         });
 
         function disableEditMode() {
@@ -344,6 +350,14 @@ if (!$user) {
         }
 
         document.getElementById('cancelEditBtn').addEventListener('click', disableEditMode);
+
+        const usernameInput = document.getElementById('username');
+        const usernameWarning = document.getElementById('usernameWarning');
+        const saveBtn = document.getElementById('saveBtn');
+        const originalUsername = usernameInput ? usernameInput.value : '';
+        const reservedWords = ['admin', 'support', 'help', 'root', 'api', 'login', 'signup', 'settings', 'dashboard', 'system', 'staff', 'mod', 'owner', 'blog', 'about', 'contact', 'null', 'undefined'];
+        const usernameRegex = /^[a-zA-Z0-9](_(?!_)|[a-zA-Z0-9]){2,18}[a-zA-Z0-9]$/;
+        let debounceTimer;
 
         if (usernameInput && usernameWarning) {
             usernameInput.addEventListener('input', (e) => {
