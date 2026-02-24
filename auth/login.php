@@ -302,7 +302,9 @@ if (isset($_SESSION['user_id'])) {
                     const removeBtn = card.querySelector('.account-remove');
                     removeBtn.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        removeRecentLogin(account.username);
+                        if (confirm(`Are you sure you want to remove ${account.username} from this device?`)) {
+                            removeRecentLogin(account.username);
+                        }
                     });
 
                     accountList.appendChild(card);
