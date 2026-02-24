@@ -6,7 +6,11 @@ CREATE TRIGGER prevent_duplicate_username_insert
 BEFORE INSERT ON users
 FOR EACH ROW
 BEGIN
-    IF NEW.username IS NOT NULL AND NEW.username != '' THEN
+    IF NEW.username = '' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Empty username is not allowed';
+    END IF;
+
+    IF NEW.username IS NOT NULL THEN
         IF (SELECT COUNT(*) FROM users WHERE username = NEW.username) > 0 THEN
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Duplicate username not allowed';
         END IF;
@@ -18,7 +22,11 @@ CREATE TRIGGER prevent_duplicate_username_update
 BEFORE UPDATE ON users
 FOR EACH ROW
 BEGIN
-    IF NEW.username IS NOT NULL AND NEW.username != '' AND NEW.username != OLD.username THEN
+    IF NEW.username = '' THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Empty username is not allowed';
+    END IF;
+
+    IF NEW.username IS NOT NULL AND NEW.username != OLD.username THEN
         IF (SELECT COUNT(*) FROM users WHERE username = NEW.username) > 0 THEN
             SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Duplicate username not allowed';
         END IF;
