@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Dynamic Biography Editor (Phase 2 Upgrade):** Completely overhauled `user/editor.php` to use a 4-tab Javascript interface (Identity, Personal Info, Professional Stack, The Journey).
+  - Added safe handling of standard personal attributes (`address`, `religion`, `gender`, `civil_status`, etc.) without exposing them publicly.
+  - Added JSON-based data structure internally for `family_background`.
+- **Relational Milestones Engine:** Created a new `milestones` relational table explicitly for tracking users' chronological career timelines.
+  - Users can now add, edit, and delete milestones via the AJAX-powered Journey tab.
+- **GitHub Live API Engine:** The public `view.php` now features an automatic query matching to a user's GitHub username to pull Live Tech Stack and Repository data dynamically.
+  - Implemented a resilient database caching layer (`github_cache`) limiting GitHub API pings to once every 4 hours per profile to prevent Hostinger IP ban limits.
+  - Automatically suppresses rendering of sensitive fields (addresses, family, citizenship) from the public URL for strict data privacy.
 - **Dynamic Biography Core Engine (Phase 1):**
   - **Database schema** (`database/biodata_schema.txt`) established for the `biodata` table, utilizing JSON arrays for scalable skill tags and social links.
   - **Command Center Dashboard** (`index.php`) overhauled from a generic welcome page into a functional hub featuring a visual Theme Grid (default, neon, midnight, minimal).

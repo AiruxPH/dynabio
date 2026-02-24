@@ -10,7 +10,7 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
 
     // Fetch user and biodata based on username
     $stmt = $conn->prepare("
-        SELECT u.photo, b.* 
+        SELECT u.user_id, u.photo, b.* 
         FROM users u
         LEFT JOIN biodata b ON u.user_id = b.user_id
         WHERE u.username = ?
@@ -23,8 +23,9 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
         $errorMessage = "Profile not found.";
     } else {
         $errorState = false;
+        $user_id = (int) $profile['user_id'];
 
-        // Parse data
+        // --- Core Parsing ---
         $theme = !empty($profile['theme']) ? $profile['theme'] : 'default-glass';
         $fullName = !empty($profile['full_name']) ? htmlspecialchars($profile['full_name']) : htmlspecialchars($requested_username);
         $tagline = !empty($profile['tagline']) ? htmlspecialchars($profile['tagline']) : '';
@@ -37,7 +38,7 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
             $photo = substr($photo, 3);
         }
 
-        // Safely parse JSON
+        // --- Arrays ---
         $skills = [];
         if (!empty($profile['skills'])) {
             $parsed = json_decode($profile['skills'], true);
@@ -52,7 +53,6 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
                 $socialLinks = $parsed;
         }
 
-        // Map icons for platforms
         $platformIcons = [
             'twitter' => 'fa-x-twitter',
             'github' => 'fa-github',
@@ -62,6 +62,55 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
             'facebook' => 'fa-facebook-f',
             'website' => 'fa-globe'
         ];
+
+        // --- Privacy Logic ---
+        // Address, Citizenship, Civil Status, Weight, Height, and Family Background are deliberately DROPPED 
+        // from fetching here to ensure they never leak into the HTML source code of the public URL.
+
+        // --- Timeline Logic ---
+        $msStmt = $conn->prepare("SELECT * FROM milestones WHERE user_id = ? ORDER BY milestone_date DESC");
+        $msStmt->execute([$user_id]);
+        $milestones = $msStmt->fetchAll();
+
+        // --- GitHub Live API & Cache Logic ---
+        $githubData = null;
+        $githubUsername = !empty($profile['github_username']) ? trim($profile['github_username']) : null;
+
+        if ($githubUsername) {
+            $cacheStmt = $conn->prepare("SELECT api_response, updated_at FROM github_cache WHERE user_id = ?");
+            $cacheStmt->execute([$user_id]);
+            $cache = $cacheStmt->fetch();
+
+            // If cache exists and is less than 4 hours old, use it.
+            if ($cache && (time() - strtotime($cache['updated_at'])) < 4 * 3600) {
+                $githubData = json_decode($cache['api_response'], true);
+            } else {
+                // Fetch fresh from GitHub API
+                $opts = [
+                    'http' => [
+                        'method' => 'GET',
+                        'header' => [
+                            'User-Agent: DynaBio-Portfolio-Engine'
+                        ]
+                    ]
+                ];
+                $context = stream_context_create($opts);
+                // Fetch user's latest 3 updated public repositories
+                $url = "https://api.github.com/users/" . urlencode($githubUsername) . "/repos?sort=updated&per_page=3";
+                $response = @file_get_contents($url, false, $context);
+
+                if ($response) {
+                    $githubData = json_decode($response, true);
+
+                    // Upsert cache so we don't spam GitHub
+                    $upsert = $conn->prepare("INSERT INTO github_cache (user_id, api_response) VALUES (?, ?) ON DUPLICATE KEY UPDATE api_response = VALUES(api_response)");
+                    $upsert->execute([$user_id, $response]);
+                } else if ($cache) {
+                    // Fallback to old cache if GitHub API fails
+                    $githubData = json_decode($cache['api_response'], true);
+                }
+            }
+        }
     }
 }
 ?>
@@ -72,40 +121,47 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-        <?php echo $errorState ? 'Not Found' : $fullName . ' - DynaBio'; ?>
-    </title>
+    <title><?php echo $errorState ? 'Not Found' : $fullName . ' - DynaBio'; ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/ef9baa832e.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css?v=2.0">
     <link rel="stylesheet" href="css/themes.css?v=1.0">
     <style>
         body {
-            /* Themes.css will override variables, but we setup layout here */
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color, #050505);
             color: var(--text-primary, #f3f4f6);
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 2rem 1rem;
+            padding: 3rem 1rem;
             position: relative;
             overflow-x: hidden;
         }
 
-        .profile-card {
+        .container-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            max-width: 650px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Module Structure */
+        .module-card {
             background: var(--card-bg, rgba(255, 255, 255, 0.03));
             border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
             border-radius: 20px;
             padding: 3rem;
             width: 100%;
-            max-width: 650px;
+            box-sizing: border-box;
             box-shadow: var(--card-shadow, 0 8px 32px 0 rgba(0, 0, 0, 0.5));
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            position: relative;
-            z-index: 10;
+        }
+
+        /* Identity Basics */
+        .identity-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -140,10 +196,6 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
             font-size: 0.9rem;
             color: var(--text-secondary, #a1a1aa);
             margin-top: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
         }
 
         .divider {
@@ -151,18 +203,18 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
             height: 4px;
             background: var(--primary-color, #fff);
             border-radius: 2px;
-            margin: 2rem 0;
-            box-shadow: 0 0 10px var(--primary-glow, rgba(255, 255, 255, 0.2));
+            margin: 2rem auto;
+            box-shadow: 0 0 10px var(--primary-glow);
         }
 
         .about {
             font-size: 1rem;
             line-height: 1.7;
-            color: var(--text-primary, #f3f4f6);
+            color: var(--text-primary);
             margin-bottom: 2rem;
-            max-width: 500px;
         }
 
+        /* Tags & Links */
         .skills-grid {
             display: flex;
             flex-wrap: wrap;
@@ -172,9 +224,9 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
         }
 
         .skill-badge {
-            background: var(--tag-bg, rgba(255, 255, 255, 0.05));
-            color: var(--tag-text, #e4e4e7);
-            border: 1px solid var(--tag-border, rgba(255, 255, 255, 0.1));
+            background: var(--tag-bg);
+            color: var(--tag-text);
+            border: 1px solid var(--tag-border);
             padding: 0.5rem 1rem;
             border-radius: 9999px;
             font-size: 0.85rem;
@@ -192,8 +244,8 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background: var(--card-bg, rgba(255, 255, 255, 0.05));
-            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.1));
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--primary-color, #fff);
             display: flex;
             align-items: center;
@@ -206,22 +258,146 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
         .social-btn:hover {
             transform: translateY(-5px);
             background: var(--primary-color, #fff);
-            color: var(--bg-color, #050505);
-            box-shadow: 0 10px 20px var(--primary-glow, rgba(255, 255, 255, 0.2));
+            color: var(--bg-color);
+            box-shadow: 0 10px 20px var(--primary-glow);
+        }
+
+        /* Timeline Journey */
+        .module-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0 0 2rem 0;
+            text-align: center;
+        }
+
+        .timeline-wrapper {
+            position: relative;
+            padding-left: 2rem;
+        }
+
+        .timeline-wrapper::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            bottom: 10px;
+            width: 2px;
+            background: var(--primary-color);
+            opacity: 0.2;
+            border-radius: 2px;
+        }
+
+        .t-item {
+            position: relative;
+            margin-bottom: 2.5rem;
+        }
+
+        .t-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .t-icon {
+            position: absolute;
+            left: -2rem;
+            top: 0;
+            width: 22px;
+            height: 22px;
+            transform: translateX(-40%);
+            border-radius: 50%;
+            background: var(--bg-color);
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .t-date {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .t-title {
+            font-size: 1.1rem;
+            color: var(--primary-color);
+            margin: 0 0 0.5rem 0;
+            font-weight: 600;
+        }
+
+        .t-desc {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin: 0;
+            opacity: 0.9;
+        }
+
+        /* GitHub Live Activity */
+        .repo-card {
+            display: block;
+            text-decoration: none;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .repo-card:hover {
+            transform: translateX(5px);
+            border-color: var(--primary-color);
+        }
+
+        .repo-title {
+            margin: 0 0 0.25rem 0;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .repo-desc {
+            margin: 0 0 0.75rem 0;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .repo-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .repo-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
         }
 
         .footer-branding {
+            text-align: center;
             text-decoration: none;
-            color: var(--text-secondary, #a1a1aa);
+            color: var(--text-secondary);
             font-size: 0.8rem;
-            margin-top: 3rem;
+            display: block;
             opacity: 0.6;
             transition: opacity 0.3s;
+            margin-top: 1rem;
         }
 
         .footer-branding:hover {
             opacity: 1;
-            color: var(--text-primary, #fff);
+            color: var(--text-primary);
         }
 
         /* 404 State */
@@ -240,72 +416,103 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
 <body>
 
     <?php if ($errorState): ?>
-        <div class="profile-card error-state">
-            <i class="fas fa-exclamation-triangle"></i>
-            <h1 class="name">404</h1>
-            <p class="tagline">
-                <?php echo $errorMessage; ?>
-            </p>
-            <a href="index.php" class="social-btn"
-                style="width: auto; padding: 0 1.5rem; border-radius: 8px; font-size: 1rem; margin-top: 2rem;">
-                Return Home
-            </a>
+        <div class="container-col">
+            <div class="module-card error-state">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h1 class="name">404</h1>
+                <p class="tagline"><?php echo $errorMessage; ?></p>
+                <a href="index.php" class="social-btn"
+                    style="width: auto; padding: 0 1.5rem; border-radius: 8px; font-size: 1rem; margin: 2rem auto 0;">Return
+                    Home</a>
+            </div>
         </div>
     <?php else: ?>
-        <div class="profile-card">
+        <div class="container-col">
 
-            <img src="<?php echo htmlspecialchars($photo); ?>" alt="Profile avatar" class="avatar">
+            <!-- MODULE 1: IDENTITY -->
+            <div class="module-card identity-wrapper">
+                <img src="<?php echo htmlspecialchars($photo); ?>" alt="Profile avatar" class="avatar">
+                <h1 class="name"><?php echo $fullName; ?></h1>
+                <?php if ($tagline): ?>
+                    <h2 class="tagline"><?php echo $tagline; ?></h2><?php endif; ?>
+                <?php if ($location): ?>
+                    <div class="location"><i class="fas fa-map-marker-alt"></i> <?php echo $location; ?></div><?php endif; ?>
 
-            <h1 class="name">
-                <?php echo $fullName; ?>
-            </h1>
+                <div class="divider"></div>
 
-            <?php if ($tagline): ?>
-                <h2 class="tagline">
-                    <?php echo $tagline; ?>
-                </h2>
-            <?php endif; ?>
+                <?php if ($aboutMe): ?>
+                    <div class="about"><?php echo $aboutMe; ?></div>
+                <?php endif; ?>
 
-            <?php if ($location): ?>
-                <div class="location">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <?php echo $location; ?>
+                <?php if (!empty($skills)): ?>
+                    <div class="skills-grid">
+                        <?php foreach ($skills as $skill): ?>
+                            <span class="skill-badge"><?php echo htmlspecialchars($skill); ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!empty($socialLinks)): ?>
+                    <div class="social-links">
+                        <?php foreach ($socialLinks as $platform => $url): ?>
+                            <?php $iconClass = isset($platformIcons[$platform]) ? $platformIcons[$platform] : 'fa-link'; ?>
+                            <a href="<?php echo htmlspecialchars($url); ?>" target="_blank" class="social-btn"
+                                aria-label="<?php echo ucfirst($platform); ?>">
+                                <i class="fa-brands <?php echo $iconClass; ?>"></i>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+
+            <!-- MODULE 2: GITHUB LIVE ACTIVITY -->
+            <?php if ($githubUsername && $githubData && !isset($githubData['message'])): ?>
+                <div class="module-card">
+                    <h2 class="module-title"><i class="fab fa-github"></i> Open Source Activity</h2>
+                    <div>
+                        <?php foreach ($githubData as $repo): ?>
+                            <a href="<?php echo htmlspecialchars($repo['html_url']); ?>" target="_blank" class="repo-card">
+                                <h3 class="repo-title">
+                                    <?php echo htmlspecialchars($repo['name']); ?>
+                                    <i class="fas fa-arrow-right" style="opacity: 0.5; font-size: 0.8rem;"></i>
+                                </h3>
+                                <?php if (!empty($repo['description'])): ?>
+                                    <p class="repo-desc"><?php echo htmlspecialchars($repo['description']); ?></p>
+                                <?php endif; ?>
+                                <div class="repo-meta">
+                                    <?php if (!empty($repo['language'])): ?>
+                                        <span><i class="fas fa-circle" style="color: var(--primary-color);"></i>
+                                            <?php echo htmlspecialchars($repo['language']); ?></span>
+                                    <?php endif; ?>
+                                    <span><i class="fas fa-star"></i> <?php echo $repo['stargazers_count']; ?></span>
+                                    <span><i class="fas fa-code-branch"></i> <?php echo $repo['forks_count']; ?></span>
+                                </div>
+                            </a>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             <?php endif; ?>
 
-            <div class="divider"></div>
-
-            <?php if ($aboutMe): ?>
-                <div class="about">
-                    <?php echo $aboutMe; ?>
+            <!-- MODULE 3: THE JOURNEY (TIMELINE) -->
+            <?php if (!empty($milestones)): ?>
+                <div class="module-card">
+                    <h2 class="module-title"><i class="fas fa-route"></i> The Journey</h2>
+                    <div class="timeline-wrapper">
+                        <?php foreach ($milestones as $ms): ?>
+                            <div class="t-item">
+                                <div class="t-icon"><i class="<?php echo htmlspecialchars($ms['icon']); ?>"></i></div>
+                                <span class="t-date"><?php echo date("F j, Y", strtotime($ms['milestone_date'])); ?></span>
+                                <h3 class="t-title"><?php echo htmlspecialchars($ms['title']); ?></h3>
+                                <?php if (!empty($ms['description'])): ?>
+                                    <p class="t-desc"><?php echo nl2br(htmlspecialchars($ms['description'])); ?></p>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             <?php endif; ?>
 
-            <?php if (!empty($skills)): ?>
-                <div class="skills-grid">
-                    <?php foreach ($skills as $skill): ?>
-                        <span class="skill-badge">
-                            <?php echo htmlspecialchars($skill); ?>
-                        </span>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-
-            <?php if (!empty($socialLinks)): ?>
-                <div class="social-links">
-                    <?php foreach ($socialLinks as $platform => $url): ?>
-                        <?php
-                        $iconClass = isset($platformIcons[$platform]) ? $platformIcons[$platform] : 'fa-link';
-                        ?>
-                        <a href="<?php echo htmlspecialchars($url); ?>" target="_blank" class="social-btn"
-                            aria-label="<?php echo ucfirst($platform); ?>">
-                            <i class="fa-brands <?php echo $iconClass; ?>"></i>
-                        </a>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
-
-            <a href="index.php" class="footer-branding">Powered by DynaBio</a>
+            <a href="index.php" class="footer-branding">Powered by DynaBio Engine</a>
         </div>
     <?php endif; ?>
 

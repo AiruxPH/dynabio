@@ -1,0 +1,39 @@
+-- Phase 2 Database Expansion Script
+-- This script safely adds the new fields to the existing `biodata` table
+-- and creates the two new tables required for the Milestone Timeline and GitHub integration.
+
+-- 1. Expand `biodata` table safely (ignoring if they already exist depending on SQL mode, but standard ALTER handles it)
+ALTER TABLE biodata 
+    ADD COLUMN position_desired VARCHAR(150) AFTER tagline,
+    ADD COLUMN nickname VARCHAR(50) AFTER full_name,
+    ADD COLUMN present_address TEXT AFTER location,
+    ADD COLUMN provincial_address TEXT AFTER present_address,
+    ADD COLUMN place_of_birth VARCHAR(150) AFTER provincial_address,
+    ADD COLUMN gender VARCHAR(20) AFTER place_of_birth,
+    ADD COLUMN civil_status VARCHAR(50) AFTER gender,
+    ADD COLUMN citizenship VARCHAR(50) AFTER civil_status,
+    ADD COLUMN religion VARCHAR(100) AFTER citizenship,
+    ADD COLUMN height VARCHAR(20) AFTER religion,
+    ADD COLUMN weight VARCHAR(20) AFTER height,
+    ADD COLUMN family_background JSON AFTER weight,
+    ADD COLUMN github_username VARCHAR(100) AFTER social_links;
+
+-- 2. Create the purely Relational Milestones Table for the Timeline
+CREATE TABLE IF NOT EXISTS milestones (
+    milestone_id INT(11) AUTO_INCREMENT PRIMARY KEY,
+    user_id INT(11) NOT NULL,
+    milestone_date DATE NOT NULL,
+    title VARCHAR(150) NOT NULL,
+    description TEXT,
+    icon VARCHAR(50) DEFAULT 'fa-solid fa-star',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- 3. Create the GitHub Cache Table for server protection
+CREATE TABLE IF NOT EXISTS github_cache (
+    user_id INT(11) PRIMARY KEY,
+    api_response JSON NOT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
