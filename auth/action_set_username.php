@@ -18,9 +18,9 @@ $username = trim($data['username'] ?? '');
 
 try {
     if ($skip) {
-        // Generate formatting: "User_" + (000000 + user_id)
+        // Generate formatting: "user_" + (000000 + user_id)
         $padded_id = str_pad($user_id, 6, "0", STR_PAD_LEFT);
-        $generated_username = "User_" . $padded_id;
+        $generated_username = "user_" . $padded_id;
 
         $update = $conn->prepare("UPDATE users SET username = ? WHERE user_id = ?");
         $update->execute([$generated_username, $user_id]);
