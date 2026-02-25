@@ -7,8 +7,8 @@
     <title>Dashboard - Dynabio</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/ef9baa832e.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css?v=2.0">
-    <link rel="stylesheet" href="css/themes.css?v=1.0">
+    <link rel="stylesheet" href="style.css?v=3.0">
+    <link rel="stylesheet" href="css/themes.css?v=3.0">
 </head>
 
 <body class="layout-dashboard">
@@ -23,7 +23,7 @@
         </div>
     </nav>
 
-    <link rel="stylesheet" href="css/views/dashboard.css?v=2.0">
+    <link rel="stylesheet" href="css/views/dashboard.css?v=3.0">
 
     <div class="container" style="max-width: 1000px;">
 
@@ -138,7 +138,7 @@
             currentTheme: "<?php echo htmlspecialchars($currentTheme); ?>"
         };
     </script>
-    <script src="js/views/dashboard.js?v=3.0"></script>
+    <script src="js/views/dashboard.js?v=4.0"></script>
 
     <?php include __DIR__ . '/includes/username_modal.php'; ?>
     <script src="js/background_animation.js"></script>
