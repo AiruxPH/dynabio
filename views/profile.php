@@ -27,7 +27,7 @@
             <label for="photoInput" class="avatar-upload-btn" title="Change Photo">
                 <i class="fas fa-camera"></i>
             </label>
-            <input type="file" id="photoInput" accept="image/*">
+            <input type="file" id="photoInput" accept="image/*" onchange="previewUpload(this)">
         </div>
 
         <form id="profileForm">
@@ -108,6 +108,19 @@
     <script src="../js/views/profile.js"></script>
     <?php include __DIR__ . '/../includes/username_modal.php'; ?>
     <script src="../js/background_animation.js"></script>
+
+    <!-- Phase 8: Academic Inline Event Functions (Extended) -->
+    <script>
+        function previewUpload(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('avatarPreview').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
 </body>
 
 </html>

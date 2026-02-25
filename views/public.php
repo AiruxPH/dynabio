@@ -332,7 +332,7 @@
     </style>
 </head>
 
-<body>
+<body onload="logGreeting()" oncopy="warnCopy()" oncontextmenu="protectContent(event)" onscroll="handlePublicScroll()">
 
     <a href="index.php" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
 
@@ -352,12 +352,16 @@
 
             <!-- MODULE 1: IDENTITY -->
             <div class="module-card identity-wrapper">
-                <img src="<?php echo htmlspecialchars($photo); ?>" alt="Profile avatar" class="avatar">
-                <h1 class="name"><?php echo $fullName; ?></h1>
-                <?php if ($tagline): ?>
-                    <h2 class="tagline"><?php echo $tagline; ?></h2><?php endif; ?>
-                <?php if ($location): ?>
-                    <div class="location"><i class="fas fa-map-marker-alt"></i> <?php echo $location; ?></div><?php endif; ?>
+                <div class="header">
+                    <img src="<?php echo htmlspecialchars((string) ($user['photo'] ?? 'images/default.png')); ?>"
+                        alt="Avatar" class="avatar" onerror="fallbackImage(this)">
+                    <h1 class="name"><?php echo $fullName; ?></h1>
+                    <?php if ($tagline): ?>
+                        <h2 class="tagline"><?php echo $tagline; ?></h2><?php endif; ?>
+                    <?php if ($location): ?>
+                        <div class="location"><i class="fas fa-map-marker-alt"></i> <?php echo $location; ?></div>
+                    <?php endif; ?>
+                </div>
 
                 <div class="divider"></div>
 
@@ -438,6 +442,31 @@
     <?php endif; ?>
 
     <script src="js/background_animation.js"></script>
+
+    <!-- Phase 8: Academic Inline Event Functions -->
+    <script>
+        function logGreeting() {
+            console.log("Portfolio Successfully Loaded! Welcome to DynaBio Engine.");
+        }
+        function warnCopy() {
+            alert("Please respect the author's intellectual property!");
+        }
+        function protectContent(e) {
+            e.preventDefault();
+            alert("Right-click is restricted on this portfolio for privacy reasons.");
+        }
+        function fallbackImage(img) {
+            img.onerror = null;
+            img.src = 'user-placeholder.png';
+        }
+        function handlePublicScroll() {
+            const scrollPos = window.scrollY;
+            const avatar = document.querySelector('.avatar');
+            if (avatar) {
+                avatar.style.transform = `rotate(${scrollPos / 5}deg)`;
+            }
+        }
+    </script>
 </body>
 
 </html>

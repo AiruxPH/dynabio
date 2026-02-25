@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="css/themes.css?v=3.0">
 </head>
 
-<body class="layout-dashboard">
+<body class="layout-dashboard" onresize="logResize()">
 
     <nav class="navbar">
         <div class="navbar-brand">Dynabio</div>
@@ -29,9 +29,10 @@
 
         <div class="dashboard-header">
             <div class="user-greeting">
-                <img src="<?php echo htmlspecialchars($photo); ?>" alt="Profile" class="dashboard-profile-pic">
+                <img src="<?php echo htmlspecialchars($photo); ?>" alt="Profile" class="dashboard-profile-pic"
+                    onmouseover="zoomProfile(this)" onmouseout="unzoomProfile(this)">
                 <div>
-                    <h1 style="margin: 0; font-size: 2rem;">Welcome,
+                    <h1 style="margin: 0; font-size: 2rem;" ondblclick="highlightWelcome(this)">Welcome,
                         <?php echo $displayName; ?>
                     </h1>
                     <p style="margin: 0.25rem 0 0 0; color: #a1a1aa;">Manage your dynamic biographical presence.</p>
@@ -143,6 +144,25 @@
     <?php include __DIR__ . '/includes/username_modal.php'; ?>
     <script src="js/background_animation.js"></script>
     <script src="js/toast.js"></script>
+
+    <!-- Phase 8: Academic Inline Event Functions -->
+    <script>
+        function zoomProfile(element) {
+            element.style.transform = "scale(1.1)";
+            element.style.transition = "transform 0.3s ease";
+        }
+        function unzoomProfile(element) {
+            element.style.transform = "scale(1)";
+        }
+        function highlightWelcome(element) {
+            alert("Hello Dynabio! You double-clicked the welcome header.");
+            element.style.color = "var(--primary-color)";
+            element.style.textShadow = "0 0 10px var(--primary-color)";
+        }
+        function logResize() {
+            console.log(`Viewport dynamically resized to: ${window.innerWidth}px x ${window.innerHeight}px`);
+        }
+    </script>
 </body>
 
 </html>

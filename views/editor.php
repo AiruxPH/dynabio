@@ -66,7 +66,7 @@
                             <div class="form-group">
                                 <label>Full Display Name</label>
                                 <input type="text" id="full_name" class="form-control" value="<?php echo $fullName; ?>"
-                                    placeholder="e.g. Jane Doe">
+                                    placeholder="e.g. Jane Doe" oninput="autoCapitalize(this)">
                             </div>
                             <div class="form-group">
                                 <label>Nickname</label>
@@ -83,13 +83,17 @@
                         <div class="form-group">
                             <label>Professional Tagline</label>
                             <input type="text" id="tagline" class="form-control" value="<?php echo $tagline; ?>"
-                                placeholder="e.g. Visionary Architect building the future">
+                                placeholder="e.g. Visionary Architect building the future"
+                                onfocus="highlightInput(this)" onblur="removeHighlight(this)">
                         </div>
 
                         <div class="form-group">
                             <label>About Me Story</label>
                             <textarea id="about_me" class="form-control form-textarea"
-                                placeholder="Tell the world your story..."><?php echo $aboutMe; ?></textarea>
+                                placeholder="Tell the world your story..."
+                                onkeyup="countChars(this)"><?php echo $aboutMe; ?></textarea>
+                            <div id="charCount"
+                                style="text-align: right; font-size: 0.8rem; color: #a1a1aa; margin-top: 5px;"></div>
                         </div>
                     </div>
                 </div>
@@ -153,12 +157,12 @@
                             <div class="form-group">
                                 <label>Height</label>
                                 <input type="text" id="height" class="form-control" value="<?php echo $height; ?>"
-                                    placeholder="e.g. 175cm">
+                                    placeholder="e.g. 175cm" onfocusout="appendCm(this)">
                             </div>
                             <div class="form-group">
                                 <label>Weight</label>
                                 <input type="text" id="weight" class="form-control" value="<?php echo $weight; ?>"
-                                    placeholder="e.g. 70kg">
+                                    placeholder="e.g. 70kg" onkeydown="preventLetters(event)">
                             </div>
                         </div>
 
@@ -191,7 +195,8 @@
                         <div class="form-group">
                             <label>GitHub Username</label>
                             <input type="text" id="github_username" class="form-control"
-                                value="<?php echo $githubUsername; ?>" placeholder="e.g. octocat">
+                                value="<?php echo $githubUsername; ?>" placeholder="e.g. octocat"
+                                onpaste="sanitizeGithubPaste(event, this)">
                         </div>
 
                         <h2 class="section-title" style="margin-top: 2.5rem;">My Skills</h2>
@@ -221,7 +226,8 @@
                     style="padding: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
                     <span style="color: #a1a1aa; font-size: 0.9rem;">Remember to save changes made across Identity,
                         Personal, and Professional tabs.</span>
-                    <button type="submit" class="btn btn-primary" id="saveDraftBtn" style="width: auto;">
+                    <button type="submit" class="btn btn-primary" id="saveDraftBtn" style="width: auto;"
+                        onmousedown="showProcessing(this)">
                         <span id="saveBtnText"><i class="fas fa-save"></i> Save Global Blueprint</span>
                     </button>
                 </div>
@@ -252,18 +258,20 @@
                         <div class="form-group">
                             <label>Icon Graphic</label>
                             <input type="hidden" id="ms_icon" value="fa-solid fa-star">
-                            <div class="icon-selector">
-                                <div class="icon-option active" data-icon="fa-solid fa-star"><i
-                                        class="fa-solid fa-star"></i></div>
-                                <div class="icon-option" data-icon="fa-solid fa-graduation-cap"><i
-                                        class="fa-solid fa-graduation-cap"></i></div>
-                                <div class="icon-option" data-icon="fa-solid fa-briefcase"><i
-                                        class="fa-solid fa-briefcase"></i></div>
-                                <div class="icon-option" data-icon="fa-solid fa-award"><i class="fa-solid fa-award"></i>
+                            <div class="icon-selector" ondrop="dropIcon(event)" ondragover="allowDropIcon(event)">
+                                <div class="icon-option active" data-icon="fa-solid fa-star" draggable="true"
+                                    ondragstart="dragIcon(event)"><i class="fa-solid fa-star"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-graduation-cap" draggable="true"
+                                    ondragstart="dragIcon(event)"><i class="fa-solid fa-graduation-cap"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-briefcase" draggable="true"
+                                    ondragstart="dragIcon(event)"><i class="fa-solid fa-briefcase"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-award" draggable="true"
+                                    ondragstart="dragIcon(event)"><i class="fa-solid fa-award"></i>
                                 </div>
-                                <div class="icon-option" data-icon="fa-solid fa-rocket"><i
-                                        class="fa-solid fa-rocket"></i></div>
-                                <div class="icon-option" data-icon="fa-solid fa-heart"><i class="fa-solid fa-heart"></i>
+                                <div class="icon-option" data-icon="fa-solid fa-rocket" draggable="true"
+                                    ondragstart="dragIcon(event)"><i class="fa-solid fa-rocket"></i></div>
+                                <div class="icon-option" data-icon="fa-solid fa-heart" draggable="true"
+                                    ondragstart="dragIcon(event)"><i class="fa-solid fa-heart"></i>
                                 </div>
                             </div>
                         </div>
@@ -331,6 +339,66 @@
 
     <?php include __DIR__ . '/../includes/username_modal.php'; ?>
     <script src="../js/background_animation.js"></script>
+
+    <!-- Phase 8: Academic Inline Event Functions -->
+    <script>
+        function highlightInput(element) {
+            element.style.backgroundColor = "rgba(59, 130, 246, 0.2)";
+        }
+        function removeHighlight(element) {
+            element.style.backgroundColor = ""; // Reset
+        }
+        function countChars(element) {
+            const count = element.value.length;
+            document.getElementById('charCount').textContent = count + " characters Typed";
+        }
+        function showProcessing(element) {
+            const span = element.querySelector('#saveBtnText');
+            if (span) {
+                span.innerHTML = "<i class='fas fa-spinner fa-spin'></i> Processing...";
+            }
+        }
+        function autoCapitalize(element) {
+            element.value = element.value.replace(/\b\w/g, l => l.toUpperCase());
+        }
+        function sanitizeGithubPaste(e, element) {
+            setTimeout(() => {
+                let val = element.value;
+                if (val.includes('github.com/')) {
+                    element.value = val.split('github.com/')[1].replace('/', '');
+                }
+            }, 10);
+        }
+        function appendCm(element) {
+            let val = element.value.trim();
+            if (val && !isNaN(val)) {
+                element.value = val + "cm";
+            }
+        }
+        function preventLetters(event) {
+            if ([46, 8, 9, 27, 13, 110, 190].indexOf(event.keyCode) !== -1 ||
+                (event.keyCode === 65 && (event.ctrlKey === true || event.metaKey === true)) ||
+                (event.keyCode >= 35 && event.keyCode <= 40)) {
+                return;
+            }
+            if ((event.shiftKey || (event.keyCode < 48 || event.keyCode > 57)) && (event.keyCode < 96 || event.keyCode > 105)) {
+                event.preventDefault();
+            }
+        }
+        function dragIcon(event) {
+            event.dataTransfer.setData("text", event.target.getAttribute('data-icon'));
+            event.target.style.opacity = "0.5";
+        }
+        function dropIcon(event) {
+            event.preventDefault();
+            const data = event.dataTransfer.getData("text");
+            alert("Icon data dropped: " + data);
+            event.target.style.opacity = "1";
+        }
+        function allowDropIcon(event) {
+            event.preventDefault();
+        }
+    </script>
 </body>
 
 </html>
