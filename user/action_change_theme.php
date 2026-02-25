@@ -33,7 +33,11 @@ $allowed_themes = [
     'default-glass',
     'neon-cyberpunk',
     'midnight-blue',
-    'minimal-light'
+    'minimal-light',
+    'solarized-amber',
+    'emerald-matrix',
+    'rose-quartz',
+    'deep-space'
 ];
 
 if (!in_array($new_theme, $allowed_themes)) {
