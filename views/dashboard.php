@@ -106,7 +106,7 @@
             currentTheme: "<?php echo htmlspecialchars($currentTheme); ?>"
         };
     </script>
-    <script src="js/views/dashboard.js"></script>
+    <script src="js/views/dashboard.js?v=3.0"></script>
 
     <?php include __DIR__ . '/includes/username_modal.php'; ?>
     <script src="js/background_animation.js"></script>
