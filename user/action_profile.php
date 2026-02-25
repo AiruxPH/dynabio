@@ -51,18 +51,62 @@ if ($action === 'update_profile') {
             jsonResponse(false, 'Image size must be less than 2MB.');
         }
 
-        $ext = pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION);
-        $filename = 'user_' . $user_id . '_' . time() . '.' . $ext;
+        $filename = 'user_' . $user_id . '_' . time() . '.jpg';
         $targetDir = __DIR__ . '/../images/profiles/';
 
         if (!is_dir($targetDir)) {
             mkdir($targetDir, 0755, true);
         }
 
-        if (move_uploaded_file($_FILES['photo']['tmp_name'], $targetDir . $filename)) {
-            $photoPath = 'images/profiles/' . $filename;
+        $sourceFile = $_FILES['photo']['tmp_name'];
+        list($origWidth, $origHeight, $imageType) = getimagesize($sourceFile);
+
+        $maxWidth = 500;
+        $newWidth = $origWidth;
+        $newHeight = $origHeight;
+
+        if ($origWidth > $maxWidth) {
+            $newWidth = $maxWidth;
+            $newHeight = (int) floor(($origHeight / $origWidth) * $maxWidth);
+        }
+
+        $srcImage = null;
+        switch ($imageType) {
+            case IMAGETYPE_JPEG:
+                $srcImage = imagecreatefromjpeg($sourceFile);
+                break;
+            case IMAGETYPE_PNG:
+                $srcImage = imagecreatefrompng($sourceFile);
+                break;
+            case IMAGETYPE_GIF:
+                $srcImage = imagecreatefromgif($sourceFile);
+                break;
+            case IMAGETYPE_WEBP:
+                $srcImage = imagecreatefromwebp($sourceFile);
+                break;
+        }
+
+        if ($srcImage) {
+            $destImage = imagecreatetruecolor($newWidth, $newHeight);
+
+            // Handle transparency for PNG/GIF -> JPG
+            if ($imageType == IMAGETYPE_PNG || $imageType == IMAGETYPE_GIF) {
+                $white = imagecolorallocate($destImage, 255, 255, 255);
+                imagefill($destImage, 0, 0, $white);
+            }
+
+            imagecopyresampled($destImage, $srcImage, 0, 0, 0, 0, $newWidth, $newHeight, $origWidth, $origHeight);
+
+            if (imagejpeg($destImage, $targetDir . $filename, 85)) {
+                $photoPath = 'images/profiles/' . $filename;
+            } else {
+                jsonResponse(false, 'Failed to save compressed image.');
+            }
+
+            imagedestroy($srcImage);
+            imagedestroy($destImage);
         } else {
-            jsonResponse(false, 'Failed to upload image.');
+            jsonResponse(false, 'Failed to process image format.');
         }
     }
 

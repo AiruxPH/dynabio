@@ -1,6 +1,18 @@
 const themeCards = document.querySelectorAll('.theme-option');
+let originalHtmlTheme = window.DashboardData ? window.DashboardData.currentTheme : 'default-glass';
 
 themeCards.forEach(card => {
+    // Live Preview on Hover
+    card.addEventListener('mouseenter', function () {
+        const hoverTheme = this.getAttribute('data-theme-id');
+        document.documentElement.setAttribute('data-theme', hoverTheme);
+    });
+
+    // Revert Preview on Mouse Leave
+    card.addEventListener('mouseleave', function () {
+        document.documentElement.setAttribute('data-theme', originalHtmlTheme);
+    });
+
     card.addEventListener('click', async function () {
         // Prevent duplicate saves if already active
         if (this.classList.contains('active')) return;
@@ -11,6 +23,9 @@ themeCards.forEach(card => {
         // Optimistic UI update
         if (prevActive) prevActive.classList.remove('active');
         this.classList.add('active');
+
+        originalHtmlTheme = selectedTheme;
+        document.documentElement.setAttribute('data-theme', selectedTheme);
 
         // Fire AJAX
         try {
@@ -27,13 +42,21 @@ themeCards.forEach(card => {
             } else {
                 // Revert on fail
                 this.classList.remove('active');
-                if (prevActive) prevActive.classList.add('active');
+                if (prevActive) {
+                    prevActive.classList.add('active');
+                    originalHtmlTheme = prevActive.getAttribute('data-theme-id');
+                    document.documentElement.setAttribute('data-theme', originalHtmlTheme);
+                }
 
                 showToast(data.message, "danger");
             }
         } catch (e) {
             this.classList.remove('active');
-            if (prevActive) prevActive.classList.add('active');
+            if (prevActive) {
+                prevActive.classList.add('active');
+                originalHtmlTheme = prevActive.getAttribute('data-theme-id');
+                document.documentElement.setAttribute('data-theme', originalHtmlTheme);
+            }
             showToast("Network error while saving theme.", "danger");
         }
     });

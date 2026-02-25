@@ -11,6 +11,12 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     jsonResponse(false, 'Invalid email address.');
 }
 
+// Ensure the domain has valid MX records
+$domain = substr(strrchr($email, "@"), 1);
+if (!checkdnsrr($domain, "MX")) {
+    jsonResponse(false, 'Invalid email domain. Cannot receive mail.');
+}
+
 try {
     // 1. Check if user already exists
     $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");

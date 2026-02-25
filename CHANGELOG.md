@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Miscellaneous Enhancements (Phase 6):**
+  - **Image Compression:** Integrated PHP GD library inside `user/action_profile.php` to automatically resize and compress user-uploaded profile photos to a maximum of 500px width (maintaining aspect ratio) as JPEG format.
+  - **DNS Email Validation:** Fortified `auth/action_signup.php` by injecting `checkdnsrr` to verify MX records on email domains prior to issuing verification codes.
+  - **Live Theme Preview:** Created an interactive hover state in `js/views/dashboard.js` allowing users to preview themes seamlessly by hovering over `.theme-option` cards without triggering database saves.
 - **Asset Decoupling (Phase 5):** Transitioned away from inline `<style>` and `<script>` blocks across the frontend.
   - Established central `/css/views/` and `/js/views/` directory structures for the MVC architecture.
   - Successfully decoupled all 9 frontend components (`profile.php`, `editor.php`, `dashboard.php`, and `auth/*`).
