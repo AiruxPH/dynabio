@@ -1,0 +1,148 @@
+/* Remove native eye icon */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+    display: none !important;
+}
+
+/* Fix autofill background/border */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.05) inset !important;
+    -webkit-text-fill-color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    transition: background-color 5000s ease-in-out 0s;
+    border-radius: 8px;
+}
+
+/* Password wrapper */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 40px;
+    /* space for icon */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 15px;
+    cursor: pointer;
+    color: #94a3b8;
+    transition: color 0.3s ease;
+}
+
+.toggle-password:hover {
+    color: #cbd5e1;
+}
+
+/* Account Chooser Styles */
+.account-chooser {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.account-card {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.account-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(59, 130, 246, 0.5);
+    transform: translateY(-2px);
+}
+
+.account-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.account-info {
+    flex: 1;
+    text-align: left;
+}
+
+.account-name {
+    font-weight: 600;
+    color: #f8fafc;
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+}
+
+.account-remove {
+    position: absolute;
+    right: 1rem;
+    color: #64748b;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.account-remove:hover {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+}
+
+/* Active Account Preview (When selected) */
+.active-account-preview {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(59, 130, 246, 0.05);
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    justify-content: center;
+}
+
+.active-account-preview img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #3b82f6;
+}
+
+.active-account-preview .name {
+    font-weight: 600;
+    color: #f8fafc;
+}
+
+.active-account-preview .change-btn {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #94a3b8;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    margin-left: auto;
+    transition: all 0.2s ease;
+}
+
+.active-account-preview .change-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #f8fafc;
+}

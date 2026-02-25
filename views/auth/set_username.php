@@ -8,21 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/ef9baa832e.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../style.css?v=2.0">
-    <style>
-        .skip-btn {
-            background: transparent;
-            color: #94a3b8;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            margin-top: 1rem;
-        }
-
-        .skip-btn:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.05);
-            box-shadow: none;
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-    </style>
+    <link rel="stylesheet" href="../../css/views/auth/set_username.css?v=1.0">
 </head>
 
 <body>
@@ -45,46 +31,8 @@
             </button>
         </form>
     </div>
-    <script>
-        async function submitUsername(username, isSkip) {
-            const btn = isSkip ? document.getElementById('skipBtn') : document.getElementById('submitBtn');
-
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner"></span> Processing...';
-
-            try {
-                const response = await fetch('action_set_username.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username: username, skip: isSkip })
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    showToast(data.message, "success");
-                    setTimeout(() => window.location.href = data.redirect, 1500);
-                } else {
-                    showToast(data.message, "danger");
-                    btn.disabled = false;
-                    btn.innerHTML = isSkip ? 'Skip for now' : 'Save Username';
-                }
-            } catch (error) {
-                showToast("A network error occurred. Please try again.", "danger");
-                btn.disabled = false;
-                btn.innerHTML = isSkip ? 'Skip for now' : 'Save Username';
-            }
-        }
-
-        document.getElementById('usernameForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            submitUsername(document.getElementById('username').value, false);
-        });
-
-        document.getElementById('skipBtn').addEventListener('click', function () {
-            submitUsername('', true);
-        });
-    </script>
     <script src="../js/toast.js"></script>
+    <script src="../../js/views/auth/set_username.js"></script>
     <script src="../js/background_animation.js"></script>
 </body>
 

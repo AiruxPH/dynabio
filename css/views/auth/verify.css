@@ -1,0 +1,26 @@
+.otp-fields {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.otp-fields input {
+    width: 45px;
+    height: 55px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    color: #f8fafc;
+    transition: all 0.2s ease;
+}
+
+.otp-fields input:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    background: rgba(255, 255, 255, 0.05);
+}

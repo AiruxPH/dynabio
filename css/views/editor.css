@@ -1,0 +1,296 @@
+.layout-builder {
+    display: flex;
+    gap: 2rem;
+    max-width: 1100px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+    align-items: flex-start;
+}
+
+.sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.5rem 1rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(16px);
+    position: sticky;
+    top: 2rem;
+}
+
+.tab-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 1rem 1.5rem;
+    background: transparent;
+    border: none;
+    color: #a1a1aa;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s;
+}
+
+.tab-btn i {
+    width: 20px;
+    margin-right: 0.5rem;
+    text-align: center;
+}
+
+.tab-btn:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+}
+
+.tab-btn.active {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.1);
+}
+
+.content-area {
+    flex-grow: 1;
+    min-width: 0;
+}
+
+.tab-pane {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.editor-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(16px);
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Skills Tag System */
+.skills-input-wrapper {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.skills-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    min-height: 40px;
+    padding: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+}
+
+.skill-tag {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.skill-tag button {
+    background: none;
+    border: none;
+    color: currentColor;
+    cursor: pointer;
+    padding: 0;
+    opacity: 0.7;
+}
+
+.skill-tag button:hover {
+    opacity: 1;
+    color: #fca5a5;
+}
+
+.social-link-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    align-items: center;
+}
+
+.remove-social-btn {
+    background: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.add-social-btn {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e4e4e7;
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+}
+
+.editor-footer {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 1.5rem;
+}
+
+/* Timeline Specific */
+.milestone-card {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.milestone-meta {
+    flex-grow: 1;
+}
+
+.milestone-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.milestone-date {
+    font-size: 0.8rem;
+    color: #a1a1aa;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.milestone-title {
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.milestone-desc {
+    font-size: 0.9rem;
+    color: #cbd5e1;
+    margin: 0;
+}
+
+.icon-selector {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.icon-option {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.icon-option.active {
+    background: rgba(59, 130, 246, 0.3);
+    border-color: #60a5fa;
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .layout-builder {
+        flex-direction: column;
+        top: 0;
+    }
+
+    .sidebar {
+        width: 100%;
+        display: flex;
+        overflow-x: auto;
+        padding: 0.5rem;
+        position: relative;
+    }
+
+    .tab-btn {
+        min-width: 150px;
+        margin-bottom: 0;
+        margin-right: 0.5rem;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+}

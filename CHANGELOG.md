@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Asset Decoupling (Phase 5):** Transitioned away from inline `<style>` and `<script>` blocks across the frontend.
+  - Established central `/css/views/` and `/js/views/` directory structures for the MVC architecture.
+  - Successfully decoupled all 9 frontend components (`profile.php`, `editor.php`, `dashboard.php`, and `auth/*`).
+  - Added secure `window.*Data` objects in the presentation layer to smoothly export backend PHP variables into the loaded Javascript files.
 - **Dynamic Biography Editor (Phase 2 Upgrade):** Completely overhauled `user/editor.php` to use a 4-tab Javascript interface (Identity, Personal Info, Professional Stack, The Journey).
   - Added safe handling of standard personal attributes (`address`, `religion`, `gender`, `civil_status`, etc.) without exposing them publicly.
   - Added JSON-based data structure internally for `family_background`.
