@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Theme Expansion (Phase 7):** Expanded the global visual core (`css/themes.css`) to support 4 new system-native theme identities: Solarized Amber, Emerald Matrix, Rose Quartz, and Deep Space. Injected their associated `.color-preview` blocks into `css/views/dashboard.css` and `views/dashboard.php`. The system now reliably supports 8 default themes without requiring inline CSS injection from the database.
 - **Miscellaneous Enhancements (Phase 6):**
   - **Image Compression:** Integrated PHP GD library inside `user/action_profile.php` to automatically resize and compress user-uploaded profile photos to a maximum of 500px width (maintaining aspect ratio) as JPEG format.
   - **DNS Email Validation:** Fortified `auth/action_signup.php` by injecting `checkdnsrr` to verify MX records on email domains prior to issuing verification codes.

@@ -96,6 +96,38 @@
                     <div class="theme-title">Minimal Light</div>
                     <p class="theme-desc">Clean and bright paper styling</p>
                 </div>
+
+                <!-- Solarized Amber -->
+                <div class="theme-option theme-solarized <?php echo $currentTheme === 'solarized-amber' ? 'active' : ''; ?>"
+                    data-theme-id="solarized-amber">
+                    <div class="color-preview"></div>
+                    <div class="theme-title">Solarized Amber</div>
+                    <p class="theme-desc">Warm, nostalgic terminal vibes</p>
+                </div>
+
+                <!-- Emerald Matrix -->
+                <div class="theme-option theme-emerald <?php echo $currentTheme === 'emerald-matrix' ? 'active' : ''; ?>"
+                    data-theme-id="emerald-matrix">
+                    <div class="color-preview"></div>
+                    <div class="theme-title">Emerald Matrix</div>
+                    <p class="theme-desc">Vibrant tech-focused green</p>
+                </div>
+
+                <!-- Rose Quartz -->
+                <div class="theme-option theme-rose <?php echo $currentTheme === 'rose-quartz' ? 'active' : ''; ?>"
+                    data-theme-id="rose-quartz">
+                    <div class="color-preview"></div>
+                    <div class="theme-title">Rose Quartz</div>
+                    <p class="theme-desc">Soft, premium pink aesthetics</p>
+                </div>
+
+                <!-- Deep Space -->
+                <div class="theme-option theme-space <?php echo $currentTheme === 'deep-space' ? 'active' : ''; ?>"
+                    data-theme-id="deep-space">
+                    <div class="color-preview"></div>
+                    <div class="theme-title">Deep Space</div>
+                    <p class="theme-desc">Dark, starry-night purple</p>
+                </div>
             </div>
         </div>
     </div>

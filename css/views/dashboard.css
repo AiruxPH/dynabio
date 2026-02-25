@@ -147,6 +147,26 @@
     background: #f8fafc;
 }
 
+.theme-solarized .color-preview {
+    background: linear-gradient(135deg, #b58900, #073642);
+    box-shadow: 0 0 15px rgba(181, 137, 0, 0.4);
+}
+
+.theme-emerald .color-preview {
+    background: linear-gradient(135deg, #10b981, #064e3b);
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+}
+
+.theme-rose .color-preview {
+    background: linear-gradient(135deg, #e11d48, #be123c);
+    box-shadow: 0 0 15px rgba(225, 29, 72, 0.4);
+}
+
+.theme-space .color-preview {
+    background: linear-gradient(135deg, #a78bfa, #140030);
+    box-shadow: 0 0 15px rgba(167, 139, 250, 0.4);
+}
+
 .theme-title {
     font-weight: 600;
     color: #fff;
