@@ -46,7 +46,5 @@ $milestonesStmt = $conn->prepare("SELECT * FROM milestones WHERE user_id = ? ORD
 $milestonesStmt->execute([$user_id]);
 $milestones = $milestonesStmt->fetchAll();
 
-?>
 // --- Load Output Template ---
 require_once __DIR__ . '/../views/editor.php';
-?>

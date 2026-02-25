@@ -13,6 +13,11 @@ All notable changes to this project will be documented in this file.
 - **GitHub Live API Engine:** The public `view.php` now features an automatic query matching to a user's GitHub username to pull Live Tech Stack and Repository data dynamically.
   - Implemented a resilient database caching layer (`github_cache`) limiting GitHub API pings to once every 4 hours per profile to prevent Hostinger IP ban limits.
   - Automatically suppresses rendering of sensitive fields (addresses, family, citizenship) from the public URL for strict data privacy.
+- **MVC Architecture Refactoring (Phase 3):**
+  - **Core Dashboard & Biographies:** Separated logic from presentation in `index.php` and `user/editor.php`, extracting native HTML into dedicated `views/dashboard.php` and `views/editor.php` templates.
+  - **User Profile:** Refactored `user/profile.php` to securely inherit `views/profile.php`, unifying session validation via `includes/auth_check.php`.
+  - **Authentication Flow:** Completely decoupled HTML from backend logic across all authentication handlers (`login.php`, `signup.php`, `verify.php`, `forgot_password.php`, `reset_password.php`, `set_username.php`), securely porting UI components into `views/auth/`.
+  - Applied strict PHP standards by stripping trailing closing tags (`?>`) exclusively across all controller endpoints to prevent dangerous trailing-whitespace injection errors.
 - **Dynamic Biography Core Engine (Phase 1):**
   - **Database schema** (`database/biodata_schema.txt`) established for the `biodata` table, utilizing JSON arrays for scalable skill tags and social links.
   - **Command Center Dashboard** (`index.php`) overhauled from a generic welcome page into a functional hub featuring a visual Theme Grid (default, neon, midnight, minimal).
