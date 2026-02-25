@@ -29,7 +29,6 @@ if ($photo !== 'user-placeholder.png' && strpos($photo, '../') === 0) {
 $displayName = !empty($user['username']) ? htmlspecialchars($user['username']) : htmlspecialchars($user['email']);
 $roleName = ucfirst($user['role']);
 $currentTheme = !empty($user['theme']) ? $user['theme'] : 'default-glass';
-?>
+
 // --- Load Output Template ---
 require_once __DIR__ . '/views/dashboard.php';
-?>
