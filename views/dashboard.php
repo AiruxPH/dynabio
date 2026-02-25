@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="<?php echo htmlspecialchars($currentTheme); ?>">
 
 <head>
     <meta charset="UTF-8">
@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/ef9baa832e.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css?v=2.0">
+    <link rel="stylesheet" href="css/themes.css?v=1.0">
 </head>
 
 <body class="layout-dashboard">

@@ -62,14 +62,14 @@
 }
 
 .btn-edit:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.4);
+    background: var(--primary-glow, rgba(255, 255, 255, 0.2));
+    border-color: var(--primary-color, rgba(255, 255, 255, 0.4));
 }
 
 /* Theme Grid */
 .hub-card {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: var(--card-bg, rgba(255, 255, 255, 0.03));
+    border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
     border-radius: 16px;
     padding: 2rem;
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
@@ -105,8 +105,8 @@
 }
 
 .theme-option.active {
-    border-color: #3b82f6;
-    background: rgba(59, 130, 246, 0.1);
+    border-color: var(--primary-color, #3b82f6);
+    background: var(--tag-bg, rgba(59, 130, 246, 0.1));
 }
 
 .theme-option.active::after {
@@ -116,7 +116,7 @@
     position: absolute;
     top: 10px;
     right: 10px;
-    color: #3b82f6;
+    color: var(--primary-color, #3b82f6);
     font-size: 1.25rem;
 }
 
