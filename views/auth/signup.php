@@ -18,8 +18,6 @@
             <p>Enter your email to get started</p>
         </div>
 
-        <div id="alertBox" class="alert" style="display: none;"></div>
-
         <form id="signupForm">
             <div class="form-group">
                 <label for="email">Email Address</label>
@@ -43,13 +41,10 @@
 
             const email = document.getElementById('email').value;
             const submitBtn = document.getElementById('submitBtn');
-            const alertBox = document.getElementById('alertBox');
 
             // UI Loading state
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner"></span> Sending code...';
-            alertBox.style.display = 'none';
-            alertBox.className = 'alert';
 
             try {
                 const response = await fetch('action_signup.php', {
@@ -61,31 +56,26 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alertBox.textContent = data.message;
-                    alertBox.classList.add('alert-success');
-                    alertBox.style.display = 'block';
+                    showToast(data.message, "success");
 
                     // Redirect to verification view
                     setTimeout(() => {
                         window.location.href = data.redirect;
                     }, 2000);
                 } else {
-                    alertBox.textContent = data.message;
-                    alertBox.classList.add('alert-danger');
-                    alertBox.style.display = 'block';
+                    showToast(data.message, "danger");
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<span id="btnText">Continue with Email</span>';
                 }
             } catch (error) {
-                alertBox.textContent = "A network error occurred. Please try again.";
-                alertBox.classList.add('alert-danger');
-                alertBox.style.display = 'block';
+                showToast("A network error occurred. Please try again.", "danger");
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<span id="btnText">Continue with Email</span>';
                 signupGuard.setDirty(true);
             }
         });
     </script>
+    <script src="../js/toast.js"></script>
     <script src="../js/form_guards.js"></script>
     <script>
         const signupGuard = new FormGuard('signupForm', 'submitBtn');

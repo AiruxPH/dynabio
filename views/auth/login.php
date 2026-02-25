@@ -168,8 +168,6 @@
             <p>Log in to your Dynabio account</p>
         </div>
 
-        <div id="alertBox" class="alert" style="display: none;"></div>
-
         <!-- Account Chooser Interface -->
         <div id="accountChooser" style="display: none;">
             <div class="account-chooser" id="accountList">
@@ -435,12 +433,9 @@
             const password = passwordInput.value;
             const remember = document.getElementById('remember').checked;
             const submitBtn = document.getElementById('submitBtn');
-            const alertBox = document.getElementById('alertBox');
 
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner"></span> Authenticating...';
-            alertBox.style.display = 'none';
-            alertBox.className = 'alert';
 
             try {
                 const response = await fetch('action_login.php', {
@@ -452,9 +447,7 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alertBox.textContent = data.message;
-                    alertBox.classList.add('alert-success');
-                    alertBox.style.display = 'block';
+                    showToast(data.message, 'success');
 
                     // Trigger Account Chooser Save Logic
                     if (remember && data.user) {
@@ -465,9 +458,7 @@
                         window.location.href = data.redirect || '../index.php'; // Default redirect
                     }, 1000);
                 } else {
-                    alertBox.textContent = data.message;
-                    alertBox.classList.add('alert-danger');
-                    alertBox.style.display = 'block';
+                    showToast(data.message, 'danger');
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<span id="btnText">Log in</span>';
 
@@ -479,14 +470,13 @@
                     }
                 }
             } catch (error) {
-                alertBox.textContent = "A network error occurred. Please try again.";
-                alertBox.classList.add('alert-danger');
-                alertBox.style.display = 'block';
+                showToast("A network error occurred. Please try again.", 'danger');
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<span id="btnText">Log in</span>';
             }
         });
     </script>
+    <script src="../js/toast.js"></script>
     <script src="../js/form_guards.js"></script>
     <script>
         // We do not track dirty state for login to avoid annoying the user on account switch

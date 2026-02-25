@@ -98,8 +98,6 @@
             <p>Set a password for your Dynabio account</p>
         </div>
 
-        <div id="alertBox" class="alert" style="display: none;"></div>
-
         <form id="passwordForm">
             <div class="form-group">
                 <label for="password">New Password</label>
@@ -217,29 +215,21 @@
             e.preventDefault();
 
             if (!isPasswordValid) {
-                const alertBox = document.getElementById('alertBox');
-                alertBox.textContent = "Please meet all password requirements.";
-                alertBox.className = 'alert alert-danger';
-                alertBox.style.display = 'block';
+                showToast("Please meet all password requirements.", "danger");
                 return;
             }
 
             const password = document.getElementById('password').value;
             const confirm_password = document.getElementById('confirm_password').value;
             const submitBtn = document.getElementById('submitBtn');
-            const alertBox = document.getElementById('alertBox');
 
             if (password !== confirm_password) {
-                alertBox.textContent = "Passwords do not match.";
-                alertBox.classList.add('alert-danger');
-                alertBox.style.display = 'block';
+                showToast("Passwords do not match.", "danger");
                 return;
             }
 
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner"></span> Saving...';
-            alertBox.style.display = 'none';
-            alertBox.className = 'alert';
 
             try {
                 const response = await fetch('action_set_password.php', {
@@ -251,29 +241,24 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alertBox.textContent = data.message;
-                    alertBox.classList.add('alert-success');
-                    alertBox.style.display = 'block';
+                    showToast(data.message, "success");
 
                     setTimeout(() => {
                         window.location.href = data.redirect;
                     }, 1500);
                 } else {
-                    alertBox.textContent = data.message;
-                    alertBox.classList.add('alert-danger');
-                    alertBox.style.display = 'block';
+                    showToast(data.message, "danger");
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<span id="btnText">Save Password & Login</span>';
                 }
             } catch (error) {
-                alertBox.textContent = "A network error occurred. Please try again.";
-                alertBox.classList.add('alert-danger');
-                alertBox.style.display = 'block';
+                showToast("A network error occurred. Please try again.", "danger");
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<span id="btnText">Save Password & Login</span>';
             }
         });
     </script>
+    <script src="../js/toast.js"></script>
     <script src="../js/background_animation.js"></script>
 </body>
 

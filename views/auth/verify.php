@@ -48,8 +48,6 @@
                 </strong></p>
         </div>
 
-        <div id="alertBox" class="alert" style="display: none;"></div>
-
         <form id="verifyForm">
             <input type="hidden" id="email" value="<?php echo htmlspecialchars((string) $email); ?>">
 
@@ -94,7 +92,6 @@
         let timer = 60;
         const resendBtn = document.getElementById('resendBtn');
         const email = document.getElementById('email').value;
-        const alertBox = document.getElementById('alertBox');
 
         function startTimer() {
             resendBtn.disabled = true;
@@ -130,24 +127,18 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alertBox.textContent = "New verification code sent!";
-                    alertBox.className = 'alert alert-success';
-                    alertBox.style.display = 'block';
+                    showToast("New verification code sent!", "success");
                     // Clear all OTP fields
                     otpInputs.forEach(input => input.value = '');
                     otpInputs[0].focus();
                     startTimer();
                 } else {
-                    alertBox.textContent = data.message;
-                    alertBox.className = 'alert alert-danger';
-                    alertBox.style.display = 'block';
+                    showToast(data.message, "danger");
                     resendBtn.disabled = false;
                     resendBtn.textContent = 'Resend Code';
                 }
             } catch (err) {
-                alertBox.textContent = "Failed to resend. Check your connection.";
-                alertBox.className = 'alert alert-danger';
-                alertBox.style.display = 'block';
+                showToast("Failed to resend. Check your connection.", "danger");
                 resendBtn.disabled = false;
                 resendBtn.textContent = 'Resend Code';
             }
@@ -235,9 +226,7 @@
             otpInputs.forEach(input => code += input.value);
 
             if (code.length !== 6) {
-                alertBox.textContent = "Please enter all 6 digits.";
-                alertBox.className = 'alert alert-danger';
-                alertBox.style.display = 'block';
+                showToast("Please enter all 6 digits.", "danger");
                 return;
             }
 
@@ -246,8 +235,6 @@
             submitBtn.disabled = true;
             otpInputs.forEach(input => input.disabled = true);
             submitBtn.innerHTML = '<span class="spinner"></span> Verifying...';
-            alertBox.style.display = 'none';
-            alertBox.className = 'alert';
 
             try {
                 const response = await fetch('action_verify.php', {
@@ -259,31 +246,26 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alertBox.textContent = data.message;
-                    alertBox.classList.add('alert-success');
-                    alertBox.style.display = 'block';
+                    showToast(data.message, "success");
 
                     setTimeout(() => {
                         window.location.href = data.redirect;
                     }, 1000);
                 } else {
-                    alertBox.textContent = data.message;
-                    alertBox.classList.add('alert-danger');
-                    alertBox.style.display = 'block';
+                    showToast(data.message, "danger");
                     submitBtn.disabled = false;
                     otpInputs.forEach(input => input.disabled = false);
                     submitBtn.innerHTML = '<span id="btnText">Verify & Continue</span>';
                 }
             } catch (error) {
-                alertBox.textContent = "A network error occurred. Please try again.";
-                alertBox.classList.add('alert-danger');
-                alertBox.style.display = 'block';
+                showToast("A network error occurred. Please try again.", "danger");
                 submitBtn.disabled = false;
                 otpInputs.forEach(input => input.disabled = false);
                 submitBtn.innerHTML = '<span id="btnText">Verify & Continue</span>';
             }
         });
     </script>
+    <script src="../js/toast.js"></script>
     <script src="../js/background_animation.js"></script>
 </body>
 

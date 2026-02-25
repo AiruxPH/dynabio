@@ -321,8 +321,7 @@
             <?php endif; ?>
             <a href="profile.php">
                 <img src="<?php echo !empty($user['photo']) ? htmlspecialchars("../" . $user['photo']) : '../user-placeholder.png'; ?>"
-                alt="Profile"
-                style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid
+                    alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid
                 rgba(255,255,255,0.2);">
             </a>
         </div>
@@ -334,7 +333,6 @@
                 Hub</a>
             <h1 style="margin: 0; font-size: 1.5rem;">Edit Master Profile</h1>
         </div>
-        <div id="alertBox" class="alert" style="display: none; margin-top: 1rem;"></div>
     </div>
 
     <!-- MAIN BUILDER -->
@@ -709,7 +707,6 @@
         document.getElementById('biodataForm').addEventListener('submit', async function (e) {
             e.preventDefault();
             const submitBtn = document.getElementById('saveDraftBtn');
-            const alertBox = document.getElementById('alertBox');
 
             // Gather social links
             let currentSocials = {};
@@ -754,23 +751,18 @@
             };
 
             submitBtn.disabled = true; submitBtn.innerHTML = '<span class="spinner"></span> Saving...';
-            alertBox.style.display = 'none'; alertBox.className = 'alert';
 
             try {
                 const response = await fetch('action_update_biodata.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 const data = await response.json();
                 if (data.success) {
-                    alertBox.textContent = "Blueprint updated successfully!";
-                    alertBox.classList.add('alert-success');
+                    showToast("Blueprint updated successfully!", "success");
                 } else {
-                    alertBox.textContent = data.message || "Failed to update.";
-                    alertBox.classList.add('alert-danger');
+                    showToast(data.message || "Failed to update.", "danger");
                 }
             } catch (error) {
-                alertBox.textContent = "Network error.";
-                alertBox.classList.add('alert-danger');
+                showToast("Network error.", "danger");
             } finally {
-                alertBox.style.display = 'block';
                 submitBtn.disabled = false; submitBtn.innerHTML = '<i class="fas fa-save"></i> Save Global Blueprint';
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
@@ -790,7 +782,6 @@
         document.getElementById('addMilestoneForm').addEventListener('submit', async function (e) {
             e.preventDefault();
             const btn = document.getElementById('ms_submitBtn');
-            const alertBox = document.getElementById('alertBox');
 
             const payload = {
                 action: 'add',
@@ -807,11 +798,11 @@
                 if (res.success) {
                     window.location.reload(); // Quick reload to render new PHP list perfectly
                 } else {
-                    alertBox.textContent = res.message; alertBox.className = 'alert alert-danger'; alertBox.style.display = 'block';
+                    showToast(res.message, "danger");
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             } catch (e) {
-                alertBox.textContent = "Network Error saving milestone."; alertBox.className = 'alert alert-danger'; alertBox.style.display = 'block';
+                showToast("Network Error saving milestone.", "danger");
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } finally {
                 btn.disabled = false;
@@ -821,23 +812,24 @@
         // --- TIMELINE DELETE VIA AJAX ---
         async function deleteMilestone(id) {
             if (!confirm("Are you sure you want to delete this historical milestone?")) return;
-            const alertBox = document.getElementById('alertBox');
 
             try {
                 const req = await fetch('action_manage_milestones.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete', id: id }) });
                 const res = await req.json();
                 if (res.success) {
                     document.getElementById('ms-' + id).remove();
+                    showToast("Milestone record erased.", "success");
                 } else {
-                    alertBox.textContent = res.message; alertBox.className = 'alert alert-danger'; alertBox.style.display = 'block';
+                    showToast(res.message, "danger");
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }
             } catch (e) {
-                alertBox.textContent = "Network Error deleting milestone."; alertBox.className = 'alert alert-danger'; alertBox.style.display = 'block';
+                showToast("Network Error deleting milestone.", "danger");
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
     </script>
+    <script src="../js/toast.js"></script>
     <script src="../js/form_guards.js"></script>
     <script>
         // Track unsaved changes logic on main form

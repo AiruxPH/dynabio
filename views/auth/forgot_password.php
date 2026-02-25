@@ -18,8 +18,6 @@
             <p>Enter your email to receive a recovery code</p>
         </div>
 
-        <div id="alertBox" class="alert" style="display: none;"></div>
-
         <form id="forgotForm">
             <div class="form-group">
                 <label for="email">Email Address</label>
@@ -46,12 +44,9 @@
 
             const email = document.getElementById('email').value;
             const submitBtn = document.getElementById('submitBtn');
-            const alertBox = document.getElementById('alertBox');
 
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner"></span> Sending...';
-            alertBox.style.display = 'none';
-            alertBox.className = 'alert';
 
             try {
                 const response = await fetch('action_forgot.php', {
@@ -63,29 +58,24 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alertBox.textContent = data.message;
-                    alertBox.classList.add('alert-success');
-                    alertBox.style.display = 'block';
+                    showToast(data.message, "success");
 
                     setTimeout(() => {
                         window.location.href = data.redirect;
                     }, 2000);
                 } else {
-                    alertBox.textContent = data.message;
-                    alertBox.classList.add('alert-danger');
-                    alertBox.style.display = 'block';
+                    showToast(data.message, "danger");
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '<span id="btnText">Send Recovery Code</span>';
                 }
             } catch (error) {
-                alertBox.textContent = "A network error occurred. Please try again.";
-                alertBox.classList.add('alert-danger');
-                alertBox.style.display = 'block';
+                showToast("A network error occurred. Please try again.", "danger");
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = '<span id="btnText">Send Recovery Code</span>';
             }
         });
     </script>
+    <script src="../js/toast.js"></script>
     <script src="../js/background_animation.js"></script>
 </body>
 

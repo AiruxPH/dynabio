@@ -18,6 +18,9 @@ All notable changes to this project will be documented in this file.
   - **User Profile:** Refactored `user/profile.php` to securely inherit `views/profile.php`, unifying session validation via `includes/auth_check.php`.
   - **Authentication Flow:** Completely decoupled HTML from backend logic across all authentication handlers (`login.php`, `signup.php`, `verify.php`, `forgot_password.php`, `reset_password.php`, `set_username.php`), securely porting UI components into `views/auth/`.
   - Applied strict PHP standards by stripping trailing closing tags (`?>`) exclusively across all controller endpoints to prevent dangerous trailing-whitespace injection errors.
+- **Global Toast Notification System (Phase 4):**
+  - Transitioned the entire platform away from localized HTML alert boxes towards a modern, non-intrusive `showToast(message, type)` javascript utility.
+  - Successfully mapped across all views in Authentication, Dashboard, Profile, and Editor.
 - **Dynamic Biography Core Engine (Phase 1):**
   - **Database schema** (`database/biodata_schema.txt`) established for the `biodata` table, utilizing JSON arrays for scalable skill tags and social links.
   - **Command Center Dashboard** (`index.php`) overhauled from a generic welcome page into a functional hub featuring a visual Theme Grid (default, neon, midnight, minimal).

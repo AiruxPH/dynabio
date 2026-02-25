@@ -31,7 +31,6 @@
             <h1>Choose Username</h1>
             <p>Customize how you appear on Dynabio</p>
         </div>
-        <div id="alertBox" class="alert" style="display: none;"></div>
         <form id="usernameForm">
             <div class="form-group">
                 <label for="username">Username</label>
@@ -49,11 +48,9 @@
     <script>
         async function submitUsername(username, isSkip) {
             const btn = isSkip ? document.getElementById('skipBtn') : document.getElementById('submitBtn');
-            const alertBox = document.getElementById('alertBox');
 
             btn.disabled = true;
             btn.innerHTML = '<span class="spinner"></span> Processing...';
-            alertBox.style.display = 'none';
 
             try {
                 const response = await fetch('action_set_username.php', {
@@ -64,21 +61,15 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    alertBox.textContent = data.message;
-                    alertBox.className = 'alert alert-success';
-                    alertBox.style.display = 'block';
+                    showToast(data.message, "success");
                     setTimeout(() => window.location.href = data.redirect, 1500);
                 } else {
-                    alertBox.textContent = data.message;
-                    alertBox.className = 'alert alert-danger';
-                    alertBox.style.display = 'block';
+                    showToast(data.message, "danger");
                     btn.disabled = false;
                     btn.innerHTML = isSkip ? 'Skip for now' : 'Save Username';
                 }
             } catch (error) {
-                alertBox.textContent = "A network error occurred. Please try again.";
-                alertBox.className = 'alert alert-danger';
-                alertBox.style.display = 'block';
+                showToast("A network error occurred. Please try again.", "danger");
                 btn.disabled = false;
                 btn.innerHTML = isSkip ? 'Skip for now' : 'Save Username';
             }
@@ -93,6 +84,7 @@
             submitUsername('', true);
         });
     </script>
+    <script src="../js/toast.js"></script>
     <script src="../js/background_animation.js"></script>
 </body>
 

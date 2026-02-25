@@ -185,7 +185,6 @@
     </style>
 
     <div class="container" style="max-width: 1000px;">
-        <div id="alertBox" class="alert" style="display: none; margin-bottom: 1.5rem;"></div>
 
         <div class="dashboard-header">
             <div class="user-greeting">
@@ -262,7 +261,6 @@
 
     <script>
         const themeCards = document.querySelectorAll('.theme-option');
-        const alertBox = document.getElementById('alertBox');
 
         themeCards.forEach(card => {
             card.addEventListener('click', async function () {
@@ -287,29 +285,18 @@
                     const data = await response.json();
 
                     if (data.success) {
-                        alertBox.textContent = "Theme Updated Successfully!";
-                        alertBox.className = 'alert alert-success';
-                        alertBox.style.display = 'block';
-
-                        // Auto-hide success
-                        setTimeout(() => {
-                            alertBox.style.display = 'none';
-                        }, 3000);
+                        showToast("Theme Updated Successfully!", "success");
                     } else {
                         // Revert on fail
                         this.classList.remove('active');
                         if (prevActive) prevActive.classList.add('active');
 
-                        alertBox.textContent = data.message;
-                        alertBox.className = 'alert alert-danger';
-                        alertBox.style.display = 'block';
+                        showToast(data.message, "danger");
                     }
                 } catch (e) {
                     this.classList.remove('active');
                     if (prevActive) prevActive.classList.add('active');
-                    alertBox.textContent = "Network error while saving theme.";
-                    alertBox.className = 'alert alert-danger';
-                    alertBox.style.display = 'block';
+                    showToast("Network error while saving theme.", "danger");
                 }
             });
         });
@@ -317,6 +304,7 @@
 
     <?php include __DIR__ . '/includes/username_modal.php'; ?>
     <script src="js/background_animation.js"></script>
+    <script src="js/toast.js"></script>
 </body>
 
 </html>

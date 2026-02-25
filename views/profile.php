@@ -104,8 +104,6 @@
             <p>Manage your account settings</p>
         </div>
 
-        <div id="alertBox" class="alert" style="display: none;"></div>
-
         <div class="avatar-section">
             <img src="../<?php echo htmlspecialchars((string) ($user['photo'] ?? 'images/default.png')); ?>"
                 alt="Avatar" class="avatar-img" id="avatarPreview">
@@ -184,15 +182,6 @@
     </div>
 
     <script>
-        const alertBox = document.getElementById('alertBox');
-
-        function showAlert(msg, isSuccess) {
-            alertBox.textContent = msg;
-            alertBox.className = 'alert ' + (isSuccess ? 'alert-success' : 'alert-danger');
-            alertBox.style.display = 'block';
-            setTimeout(() => { alertBox.style.display = 'none'; }, 5000);
-        }
-
         // Photo Upload Preview
         const photoInput = document.getElementById('photoInput');
         photoInput.addEventListener('change', function () {
@@ -227,7 +216,8 @@
                     body: formData
                 });
                 const data = await response.json();
-                showAlert(data.message, data.success);
+
+                showToast(data.message, data.success ? 'success' : 'danger');
 
                 if (data.success) {
                     // Update dataset original values silently
@@ -240,7 +230,7 @@
                     profileGuard.setDirty(true);
                 }
             } catch (err) {
-                showAlert("Network error occurred.", false);
+                showToast("Network error occurred.", "danger");
                 profileGuard.setDirty(true);
             }
 
@@ -274,19 +264,20 @@
                 if (data.success) {
                     window.location.href = '../auth/login.php';
                 } else {
-                    showAlert(data.message, false);
+                    showToast(data.message, "danger");
                     deleteModal.style.display = 'none';
                     btn.innerHTML = 'Yes, Delete';
                     btn.disabled = false;
                 }
             } catch (err) {
-                showAlert("Network error.", false);
+                showToast("Network error.", "danger");
                 deleteModal.style.display = 'none';
                 btn.innerHTML = 'Yes, Delete';
                 btn.disabled = false;
             }
         });
     </script>
+    <script src="../js/toast.js"></script>
     <script src="../js/form_guards.js"></script>
     <script>
         const profileGuard = new FormGuard('profileForm', 'saveBtn');
