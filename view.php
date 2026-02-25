@@ -116,5 +116,5 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
 ?>
 
 <?php
-require_once __DIR__ . '/templates/public_view.php';
+require_once __DIR__ . '/views/public.php';
 ?>
