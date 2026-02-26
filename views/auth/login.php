@@ -42,14 +42,14 @@
             <div class="form-group" id="identifierGroup">
                 <label for="email">Email Address or Username</label>
                 <input type="text" id="email" class="form-control" placeholder="Enter your email or username..."
-                    required autocomplete="username" onkeydown="blockSpacebar(event)">
+                    required autocomplete="username" onkeydown="blockSpacebar(event)" oninput="handleTyping()">
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
                 <div class="password-wrapper">
                     <input type="password" id="password" class="form-control" placeholder="••••••••" required
-                        autocomplete="new-password" onselect="notifyPasswordSelect()">
+                        autocomplete="new-password" onselect="notifyPasswordSelect()" oninput="handleTyping()">
                     <i class="fas fa-eye-slash toggle-password" id="togglePasswordBtn"></i>
                 </div>
             </div>
@@ -108,6 +108,26 @@
                 btn.style.opacity = '1';
                 btn.style.pointerEvents = 'all';
             }, 2000);
+        }
+
+        let typingTimer;
+        function handleTyping() {
+            const btn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const container = document.querySelector('.auth-container');
+
+            btnText.innerText = 'Typing...';
+            btn.style.opacity = '0.7';
+            btn.disabled = true;
+            container.style.boxShadow = '0 0 25px rgba(59, 130, 246, 0.4)';
+
+            clearTimeout(typingTimer);
+            typingTimer = setTimeout(() => {
+                btnText.innerText = 'Log in';
+                btn.style.opacity = '1';
+                btn.disabled = false;
+                container.style.boxShadow = '';
+            }, 750);
         }
     </script>
 </body>

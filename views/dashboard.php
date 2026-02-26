@@ -70,7 +70,7 @@
             <p style="color: #a1a1aa; font-size: 0.95rem; margin-bottom: 0;">Select a theme below to instantly transform
                 how the world sees your public portfolio.</p>
 
-            <div class="theme-grid" onmousemove="tiltPreview(event, this)">
+            <div class="theme-grid" onmousemove="tiltPreview(event, this)" onmouseout="resetTilt(this)">
                 <!-- Glassmorphism -->
                 <div class="theme-option theme-default <?php echo $currentTheme === 'default-glass' ? 'active' : ''; ?>"
                     data-theme-id="default-glass">
@@ -188,7 +188,12 @@
             const y = e.clientY - rect.top;
             const xOffset = (x / rect.width - 0.5) * 10;
             const yOffset = (y / rect.height - 0.5) * 10;
+            container.style.transition = 'none'; // Disable transition for instant tracking
             container.style.transform = `perspective(1000px) rotateY(${xOffset}deg) rotateX(${-yOffset}deg)`;
+        }
+        function resetTilt(container) {
+            container.style.transition = 'transform 0.5s ease-out'; // Re-enable smooth transition back to center
+            container.style.transform = 'perspective(1000px) rotateY(0deg) rotateX(0deg)';
         }
     </script>
 </body>
