@@ -7,8 +7,8 @@
     <title>About Us - Dynabio</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://kit.fontawesome.com/ef9baa832e.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../style.css?v=3.0">
-    <link rel="stylesheet" href="../css/views/about.css?v=1.0">
+    <link rel="stylesheet" href="style.css?v=3.0">
+    <link rel="stylesheet" href="css/views/about.css?v=1.0">
 </head>
 
 <body>
@@ -57,7 +57,7 @@
         </div>
 
         <div class="about-footer">
-            <a href="../index.php" class="btn-home">
+            <a href="index.php" class="btn-home">
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
             </a>
         </div>
@@ -65,7 +65,7 @@
     </div>
 
     <!-- Background Animation (Optional) -->
-    <script src="../js/background_animation.js"></script>
+    <script src="js/background_animation.js"></script>
 </body>
 
 </html>
