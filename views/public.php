@@ -437,7 +437,10 @@
                 </div>
             <?php endif; ?>
 
-            <a href="index.php" class="footer-branding">Powered by DynaBio Engine</a>
+            <div style="text-align: center; margin-top: 2rem;">
+                <a href="about.php" class="footer-branding" style="display: inline-block; margin-right: 15px;">About Us</a>
+                <a href="index.php" class="footer-branding" style="display: inline-block;">Powered by DynaBio Engine</a>
+            </div>
         </div>
     <?php endif; ?>
 
