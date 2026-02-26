@@ -350,91 +350,106 @@
     <?php else: ?>
         <div class="container-col">
 
-            <!-- MODULE 1: IDENTITY -->
-            <div class="module-card identity-wrapper">
-                <div class="header">
-                    <img src="<?php echo htmlspecialchars((string) ($photo ?? 'images/default.png')); ?>" alt="Avatar"
-                        class="avatar" onerror="fallbackImage(this)">
-                    <h1 class="name"><?php echo $fullName; ?></h1>
-                    <?php if ($tagline): ?>
-                        <h2 class="tagline"><?php echo $tagline; ?></h2><?php endif; ?>
-                    <?php if ($location): ?>
-                        <div class="location"><i class="fas fa-map-marker-alt"></i> <?php echo $location; ?></div>
+            <?php if (isset($isNewUser) && $isNewUser): ?>
+                <!-- EMPTY STATE MODULE -->
+                <div class="module-card identity-wrapper" style="text-align: center; padding: 4rem 2rem;">
+                    <div
+                        style="width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 2px dashed rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem auto;">
+                        <i class="fas fa-ghost" style="font-size: 2.5rem; color: rgba(255,255,255,0.2);"></i>
+                    </div>
+                    <h1 class="name" style="font-size: 1.75rem; color: #f8fafc; margin-bottom: 0.5rem;">Profile Not Set Up</h1>
+                    <p class="about" style="color: #94a3b8; margin-bottom: 0;">This user has registered an account with DynaBio,
+                        but hasn't configured their public biography or timeline yet. Check back later!</p>
+                </div>
+            <?php else: ?>
+
+                <!-- MODULE 1: IDENTITY -->
+                <div class="module-card identity-wrapper">
+                    <div class="header">
+                        <img src="<?php echo htmlspecialchars((string) ($photo ?? 'images/default.png')); ?>" alt="Avatar"
+                            class="avatar" onerror="fallbackImage(this)">
+                        <h1 class="name"><?php echo $fullName; ?></h1>
+                        <?php if ($tagline): ?>
+                            <h2 class="tagline"><?php echo $tagline; ?></h2><?php endif; ?>
+                        <?php if ($location): ?>
+                            <div class="location"><i class="fas fa-map-marker-alt"></i> <?php echo $location; ?></div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="divider"></div>
+
+                    <?php if ($aboutMe): ?>
+                        <div class="about"><?php echo $aboutMe; ?></div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($skills)): ?>
+                        <div class="skills-grid">
+                            <?php foreach ($skills as $skill): ?>
+                                <span class="skill-badge"><?php echo htmlspecialchars($skill); ?></span>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($socialLinks)): ?>
+                        <div class="social-links">
+                            <?php foreach ($socialLinks as $platform => $url): ?>
+                                <?php $iconClass = isset($platformIcons[$platform]) ? $platformIcons[$platform] : 'fa-link'; ?>
+                                <a href="<?php echo htmlspecialchars($url); ?>" target="_blank" class="social-btn"
+                                    aria-label="<?php echo ucfirst($platform); ?>">
+                                    <i class="fa-brands <?php echo $iconClass; ?>"></i>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
                     <?php endif; ?>
                 </div>
 
-                <div class="divider"></div>
-
-                <?php if ($aboutMe): ?>
-                    <div class="about"><?php echo $aboutMe; ?></div>
-                <?php endif; ?>
-
-                <?php if (!empty($skills)): ?>
-                    <div class="skills-grid">
-                        <?php foreach ($skills as $skill): ?>
-                            <span class="skill-badge"><?php echo htmlspecialchars($skill); ?></span>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-
-                <?php if (!empty($socialLinks)): ?>
-                    <div class="social-links">
-                        <?php foreach ($socialLinks as $platform => $url): ?>
-                            <?php $iconClass = isset($platformIcons[$platform]) ? $platformIcons[$platform] : 'fa-link'; ?>
-                            <a href="<?php echo htmlspecialchars($url); ?>" target="_blank" class="social-btn"
-                                aria-label="<?php echo ucfirst($platform); ?>">
-                                <i class="fa-brands <?php echo $iconClass; ?>"></i>
-                            </a>
-                        <?php endforeach; ?>
-                    </div>
-                <?php endif; ?>
-            </div>
-
-            <!-- MODULE 2: GITHUB LIVE ACTIVITY -->
-            <?php if ($githubUsername && $githubData && !isset($githubData['message'])): ?>
-                <div class="module-card">
-                    <h2 class="module-title"><i class="fab fa-github"></i> Open Source Activity</h2>
-                    <div>
-                        <?php foreach ($githubData as $repo): ?>
-                            <a href="<?php echo htmlspecialchars($repo['html_url']); ?>" target="_blank" class="repo-card">
-                                <h3 class="repo-title">
-                                    <?php echo htmlspecialchars($repo['name']); ?>
-                                    <i class="fas fa-arrow-right" style="opacity: 0.5; font-size: 0.8rem;"></i>
-                                </h3>
-                                <?php if (!empty($repo['description'])): ?>
-                                    <p class="repo-desc"><?php echo htmlspecialchars($repo['description']); ?></p>
-                                <?php endif; ?>
-                                <div class="repo-meta">
-                                    <?php if (!empty($repo['language'])): ?>
-                                        <span><i class="fas fa-circle" style="color: var(--primary-color);"></i>
-                                            <?php echo htmlspecialchars($repo['language']); ?></span>
+                <!-- MODULE 2: GITHUB LIVE ACTIVITY -->
+                <?php if ($githubUsername && $githubData && !isset($githubData['message'])): ?>
+                    <div class="module-card">
+                        <h2 class="module-title"><i class="fab fa-github"></i> Open Source Activity</h2>
+                        <div>
+                            <?php foreach ($githubData as $repo): ?>
+                                <a href="<?php echo htmlspecialchars($repo['html_url']); ?>" target="_blank" class="repo-card">
+                                    <h3 class="repo-title">
+                                        <?php echo htmlspecialchars($repo['name']); ?>
+                                        <i class="fas fa-arrow-right" style="opacity: 0.5; font-size: 0.8rem;"></i>
+                                    </h3>
+                                    <?php if (!empty($repo['description'])): ?>
+                                        <p class="repo-desc"><?php echo htmlspecialchars($repo['description']); ?></p>
                                     <?php endif; ?>
-                                    <span><i class="fas fa-star"></i> <?php echo $repo['stargazers_count']; ?></span>
-                                    <span><i class="fas fa-code-branch"></i> <?php echo $repo['forks_count']; ?></span>
-                                </div>
-                            </a>
-                        <?php endforeach; ?>
+                                    <div class="repo-meta">
+                                        <?php if (!empty($repo['language'])): ?>
+                                            <span><i class="fas fa-circle" style="color: var(--primary-color);"></i>
+                                                <?php echo htmlspecialchars($repo['language']); ?></span>
+                                        <?php endif; ?>
+                                        <span><i class="fas fa-star"></i> <?php echo $repo['stargazers_count']; ?></span>
+                                        <span><i class="fas fa-code-branch"></i> <?php echo $repo['forks_count']; ?></span>
+                                    </div>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
-                </div>
-            <?php endif; ?>
+                <?php endif; ?>
 
-            <!-- MODULE 3: THE JOURNEY (TIMELINE) -->
-            <?php if (!empty($milestones)): ?>
-                <div class="module-card">
-                    <h2 class="module-title"><i class="fas fa-route"></i> The Journey</h2>
-                    <div class="timeline-wrapper">
-                        <?php foreach ($milestones as $ms): ?>
-                            <div class="t-item">
-                                <div class="t-icon"><i class="<?php echo htmlspecialchars($ms['icon']); ?>"></i></div>
-                                <span class="t-date"><?php echo date("F j, Y", strtotime($ms['milestone_date'])); ?></span>
-                                <h3 class="t-title"><?php echo htmlspecialchars($ms['title']); ?></h3>
-                                <?php if (!empty($ms['description'])): ?>
-                                    <p class="t-desc"><?php echo nl2br(htmlspecialchars($ms['description'])); ?></p>
-                                <?php endif; ?>
-                            </div>
-                        <?php endforeach; ?>
+                <!-- MODULE 3: THE JOURNEY (TIMELINE) -->
+                <?php if (!empty($milestones)): ?>
+                    <div class="module-card">
+                        <h2 class="module-title"><i class="fas fa-route"></i> The Journey</h2>
+                        <div class="timeline-wrapper">
+                            <?php foreach ($milestones as $ms): ?>
+                                <div class="t-item">
+                                    <div class="t-icon"><i class="<?php echo htmlspecialchars($ms['icon']); ?>"></i></div>
+                                    <span class="t-date"><?php echo date("F j, Y", strtotime($ms['milestone_date'])); ?></span>
+                                    <h3 class="t-title"><?php echo htmlspecialchars($ms['title']); ?></h3>
+                                    <?php if (!empty($ms['description'])): ?>
+                                        <p class="t-desc"><?php echo nl2br(htmlspecialchars($ms['description'])); ?></p>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
                     </div>
-                </div>
+                <?php endif; ?>
+
             <?php endif; ?>
 
             <div style="text-align: center; margin-top: 2rem;">

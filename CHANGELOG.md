@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **New User Onboarding Flows (Phase 11):** 
+  - Overhauled core databade `LEFT JOIN` queries in `index.php` and `view.php` to actively detect absolute empty states when new users authenticate for the first time.
+  - Injected a highly-visible, glowing call-to-action banner into `views/dashboard.php` specifically targeting new users, directing them immediately to the editor to configure their timeline and identity.
+  - Built a fallback rendering module into `views/public.php` showcasing a "Ghost" icon layout when visitors attempt to view the portfolio of a user who hasn't initialized any records, effectively shielding the broken UI layout.
 - **Global HTTP 500 Catch System (Phase 10):** Engineered a dual-layer crash interception architecture. Instantiated a `register_shutdown_function()` interceptor inside `includes/error_handler.php` to intrinsically clean `ob_start()` buffers and catch fatal PHP execution logic failures (`E_ERROR`, `E_PARSE`) before exposing raw stack traces. Implemented a supplementary `.htaccess` server-level directive (`ErrorDocument 500 /views/500.php`) to catch hard Apache compilation failures. Both layers dynamically route visitors to a secure, glassmorphic `500.php` fallback UI mirroring the core aesthetic.
 - **Graceful Localhost Fallbacks:** Upgraded `includes/db.php` with a preemptive `file_exists()` check targeting the database credentials via `config.php`. If a visitor clones the repo locally without building a config environment, the backend gracefully halts execution and paints an HTML UI directing them to the Live Demo and GitHub repository instead of crashing violently.
 - **Project Structure & Showcasing (Phase 9):**

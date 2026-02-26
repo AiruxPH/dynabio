@@ -62,6 +62,25 @@
             </div>
         </div>
 
+        <?php if (isset($isNewUser) && $isNewUser): ?>
+            <div
+                style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.4); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);">
+                <div>
+                    <h3 style="margin: 0 0 0.5rem 0; color: #60a5fa; font-size: 1.25rem;"><i class="fas fa-magic"
+                            style="margin-right: 8px;"></i>Welcome to DynaBio!</h3>
+                    <p style="margin: 0; color: #cbd5e1; font-size: 0.95rem; line-height: 1.5;">It looks like your dynamic
+                        identity is empty. Let's set up your timeline, skills, and public preview to get your portfolio
+                        ready for the world.</p>
+                </div>
+                <a href="user/editor.php"
+                    style="white-space: nowrap; padding: 0.75rem 1.5rem; background: #3b82f6; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 0.95rem; transition: background 0.2s, transform 0.2s; display: inline-flex; align-items: center; gap: 0.5rem;"
+                    onmouseover="this.style.background='#2563eb'; this.style.transform='translateY(-2px)';"
+                    onmouseout="this.style.background='#3b82f6'; this.style.transform='translateY(0)';">
+                    <i class="fas fa-rocket"></i> Set up Biodata
+                </a>
+            </div>
+        <?php endif; ?>
+
         <div class="hub-card">
             <h2
                 style="margin-top: 0; font-size: 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem;">

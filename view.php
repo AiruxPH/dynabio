@@ -11,7 +11,7 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
 
     // Fetch user and biodata based on username
     $stmt = $conn->prepare("
-        SELECT u.user_id, u.photo, b.* 
+        SELECT u.user_id, u.photo, b.*, b.user_id AS has_biodata 
         FROM users u
         LEFT JOIN biodata b ON u.user_id = b.user_id
         WHERE u.username = ?
@@ -25,6 +25,7 @@ if (!isset($_GET['u']) || empty(trim($_GET['u']))) {
     } else {
         $errorState = false;
         $user_id = (int) $profile['user_id'];
+        $isNewUser = empty($profile['has_biodata']);
 
         // --- Core Parsing ---
         $theme = !empty($profile['theme']) ? $profile['theme'] : 'default-glass';

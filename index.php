@@ -6,7 +6,7 @@ require_once __DIR__ . '/includes/db.php';
 
 // Fetch the latest user info and their chosen theme
 $stmt = $conn->prepare("
-    SELECT u.email, u.role, u.photo, u.username, b.theme 
+    SELECT u.email, u.role, u.photo, u.username, b.theme, b.user_id AS has_biodata 
     FROM users u 
     LEFT JOIN biodata b ON u.user_id = b.user_id 
     WHERE u.user_id = ?
@@ -30,6 +30,7 @@ if ($photo !== 'user-placeholder.png' && strpos($photo, '../') === 0) {
 $displayName = !empty($user['username']) ? htmlspecialchars($user['username']) : htmlspecialchars($user['email']);
 $roleName = ucfirst($user['role']);
 $currentTheme = !empty($user['theme']) ? $user['theme'] : 'default-glass';
+$isNewUser = empty($user['has_biodata']);
 
 // --- Load Output Template ---
 require_once __DIR__ . '/views/dashboard.php';
