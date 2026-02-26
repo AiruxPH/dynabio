@@ -353,8 +353,8 @@
             <!-- MODULE 1: IDENTITY -->
             <div class="module-card identity-wrapper">
                 <div class="header">
-                    <img src="<?php echo htmlspecialchars((string) ($user['photo'] ?? 'images/default.png')); ?>"
-                        alt="Avatar" class="avatar" onerror="fallbackImage(this)">
+                    <img src="<?php echo htmlspecialchars((string) ($photo ?? 'images/default.png')); ?>" alt="Avatar"
+                        class="avatar" onerror="fallbackImage(this)">
                     <h1 class="name"><?php echo $fullName; ?></h1>
                     <?php if ($tagline): ?>
                         <h2 class="tagline"><?php echo $tagline; ?></h2><?php endif; ?>
