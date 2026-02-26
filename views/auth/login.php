@@ -129,6 +129,17 @@
                 container.style.boxShadow = '';
             }, 750);
         }
+
+        // Logout Toast Notification
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('logout') === 'success') {
+                window.showToast("Successfully logged out. See you next time!", "success");
+                // Clean the URL without refreshing the page
+                const cleanUrl = window.location.pathname;
+                window.history.replaceState({}, document.title, cleanUrl);
+            }
+        });
     </script>
 </body>
 

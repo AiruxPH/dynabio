@@ -18,6 +18,41 @@ const backToChooserBtn = document.getElementById('backToChooserBtn');
 let selectedUsername = null;
 let globalLoginsCache = [];
 
+// Helper for smooth transitions
+function fadeSwap(hideArray, showArray) {
+    let delay = 0;
+    hideArray.forEach(el => {
+        if (el && window.getComputedStyle(el).display !== 'none') {
+            el.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+            el.style.opacity = '0';
+            el.style.transform = 'scale(0.98)';
+            delay = 200;
+        }
+    });
+
+    setTimeout(() => {
+        hideArray.forEach(el => { if (el) el.style.display = 'none'; });
+        showArray.forEach(obj => {
+            if (obj.el) {
+                obj.el.style.opacity = '0';
+                obj.el.style.transform = 'scale(1.02)';
+                obj.el.style.display = obj.display || 'block';
+            }
+        });
+
+        // Force reflow
+        void document.body.offsetWidth;
+
+        showArray.forEach(obj => {
+            if (obj.el) {
+                obj.el.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+                obj.el.style.opacity = '1';
+                obj.el.style.transform = 'scale(1)';
+            }
+        });
+    }, delay);
+}
+
 // Toggle Password Visibility
 if (togglePasswordBtn && passwordInput) {
     togglePasswordBtn.addEventListener('click', function () {
@@ -62,10 +97,10 @@ async function loadRecentLogins() {
     globalLoginsCache = logins; // Store for the standard login view
 
     if (logins.length > 0 && accountChooser && accountList) {
-        accountChooser.style.display = 'block';
-        if (loginForm) loginForm.style.display = 'none';
-        if (authFooter) authFooter.style.display = 'none';
-        if (backToChooserBtn) backToChooserBtn.style.display = 'none';
+        fadeSwap(
+            [loginForm, authFooter, backToChooserBtn],
+            [{ el: accountChooser, display: 'block' }]
+        );
 
         accountList.innerHTML = '';
         logins.forEach(account => {
@@ -110,14 +145,14 @@ function selectAccount(account) {
     selectedUsername = account.username;
     if (emailInput) emailInput.value = account.username; // Auto-fill internally
 
-    // UI Transitions
-    if (accountChooser) accountChooser.style.display = 'none';
-    if (loginForm) loginForm.style.display = 'block';
-    if (authFooter) authFooter.style.display = 'none'; // Keep hidden during quick-login
-    if (backToChooserBtn) backToChooserBtn.style.display = 'flex'; // Allow them to go back to the chooser
+    const hideItems = [accountChooser, identifierGroup, authFooter];
+    const showItems = [
+        { el: loginForm, display: 'block' },
+        { el: activeAccountPreview, display: 'flex' },
+        { el: backToChooserBtn, display: 'flex' }
+    ];
 
-    if (identifierGroup) identifierGroup.style.display = 'none'; // Hide normal email input
-    if (activeAccountPreview) activeAccountPreview.style.display = 'flex';
+    fadeSwap(hideItems, showItems);
 
     if (activeAccountImg) activeAccountImg.src = '../' + account.avatar_url;
     if (activeAccountName) activeAccountName.textContent = account.username;
@@ -129,21 +164,22 @@ function showStandardLogin() {
     selectedUsername = null;
     if (emailInput) emailInput.value = '';
 
-    if (accountChooser) accountChooser.style.display = 'none';
-    if (loginForm) loginForm.style.display = 'block';
-    if (authFooter) authFooter.style.display = 'block';
+    const hideItems = [accountChooser, activeAccountPreview];
+    const showItems = [
+        { el: loginForm, display: 'block' },
+        { el: authFooter, display: 'block' },
+        { el: identifierGroup, display: 'block' }
+    ];
 
-    // Only show back button if there are accounts they can go back to
     if (backToChooserBtn) {
         if (globalLoginsCache.length > 0) {
-            backToChooserBtn.style.display = 'flex';
+            showItems.push({ el: backToChooserBtn, display: 'flex' });
         } else {
-            backToChooserBtn.style.display = 'none';
+            hideItems.push(backToChooserBtn);
         }
     }
 
-    if (identifierGroup) identifierGroup.style.display = 'block';
-    if (activeAccountPreview) activeAccountPreview.style.display = 'none';
+    fadeSwap(hideItems, showItems);
 }
 
 function removeRecentLogin(username) {
