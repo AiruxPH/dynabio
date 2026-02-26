@@ -15,3 +15,7 @@ Thumbs.db
 
 # Database
 *.sql
+
+database/schema_updates/*.sql
+database/schema_updates/*.txt
+database/schema_updates/*.py
