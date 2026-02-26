@@ -21,7 +21,7 @@
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" class="form-control" placeholder="Enter you username here..." required
-                    autocomplete="off">
+                    autocomplete="off" oncut="preventUsernameCut(event)">
             </div>
             <button type="submit" id="submitBtn" class="btn btn-primary">
                 <span id="btnText">Save Username</span>
@@ -34,6 +34,13 @@
     <script src="../js/toast.js"></script>
     <script src="../../js/views/auth/set_username.js"></script>
     <script src="../js/background_animation.js"></script>
+    <script>
+        // Phase 8 Inline Events
+        function preventUsernameCut(e) {
+            e.preventDefault();
+            if (window.showToast) window.showToast('Please do not cut your username text.', 'warning');
+        }
+    </script>
 </body>
 
 </html>

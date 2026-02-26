@@ -25,22 +25,24 @@
 
     <link rel="stylesheet" href="css/views/dashboard.css?v=3.0">
 
-    <div class="container" style="max-width: 1000px;">
+    <div class="container" style="max-width: 1000px;" onanimationend="logContainerReady()">
 
         <div class="dashboard-header">
             <div class="user-greeting">
                 <img src="<?php echo htmlspecialchars($photo); ?>" alt="Profile" class="dashboard-profile-pic"
-                    onmouseover="zoomProfile(this)" onmouseout="unzoomProfile(this)">
+                    onmouseover="zoomProfile(this)" onmouseout="unzoomProfile(this)"
+                    ondragstart="preventGhostDrag(event)">
                 <div>
                     <h1 style="margin: 0; font-size: 2rem;" ondblclick="highlightWelcome(this)">Welcome,
                         <?php echo $displayName; ?>
                     </h1>
-                    <p style="margin: 0.25rem 0 0 0; color: #a1a1aa;">Manage your dynamic biographical presence.</p>
+                    <p class="dashboard-tagline" style="margin: 0.25rem 0 0 0; color: #a1a1aa;"
+                        oncopy="notifyTaglineCopy()">Manage your dynamic biographical presence.</p>
                 </div>
             </div>
 
             <div class="hub-actions">
-                <a href="user/editor.php" class="btn-edit">
+                <a href="user/editor.php" class="btn-edit" onauxclick="detectMiddleClick(event)">
                     <i class="fas fa-pen-nib"></i> Edit Biodata
                 </a>
                 <?php if (!empty($user['username'])): ?>
@@ -65,7 +67,7 @@
             <p style="color: #a1a1aa; font-size: 0.95rem; margin-bottom: 0;">Select a theme below to instantly transform
                 how the world sees your public portfolio.</p>
 
-            <div class="theme-grid">
+            <div class="theme-grid" onmousemove="tiltPreview(event, this)">
                 <!-- Glassmorphism -->
                 <div class="theme-option theme-default <?php echo $currentTheme === 'default-glass' ? 'active' : ''; ?>"
                     data-theme-id="default-glass">
@@ -161,6 +163,29 @@
         }
         function logResize() {
             console.log(`Viewport dynamically resized to: ${window.innerWidth}px x ${window.innerHeight}px`);
+        }
+        function logContainerReady() {
+            console.log('Dashboard UI has finished rendering.');
+        }
+        function preventGhostDrag(e) {
+            e.preventDefault();
+        }
+        function notifyTaglineCopy() {
+            if (window.showToast) window.showToast('Tagline safely copied to clipboard!', 'success');
+        }
+        function detectMiddleClick(e) {
+            if (e.button === 1) {
+                console.log('Spawning editor in a background tab via middle-click.');
+            }
+        }
+        function tiltPreview(e, container) {
+            // Apply a subtle 3D tilt based on mouse coordinates over the grid
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const xOffset = (x / rect.width - 0.5) * 10;
+            const yOffset = (y / rect.height - 0.5) * 10;
+            container.style.transform = `perspective(1000px) rotateY(${xOffset}deg) rotateX(${-yOffset}deg)`;
         }
     </script>
 </body>

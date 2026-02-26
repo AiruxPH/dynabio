@@ -13,7 +13,7 @@
 
 <body>
 
-    <div class="auth-container">
+    <div class="auth-container" onmouseenter="toggleGlow(this, true)" onmouseleave="toggleGlow(this, false)">
         <div class="auth-header">
             <h1>Welcome Back</h1>
             <p>Log in to your Dynabio account</p>
@@ -42,14 +42,14 @@
             <div class="form-group" id="identifierGroup">
                 <label for="email">Email Address or Username</label>
                 <input type="text" id="email" class="form-control" placeholder="Enter your email or username..."
-                    required autocomplete="username">
+                    required autocomplete="username" onkeydown="blockSpacebar(event)">
             </div>
 
             <div class="form-group">
                 <label for="password">Password</label>
                 <div class="password-wrapper">
                     <input type="password" id="password" class="form-control" placeholder="••••••••" required
-                        autocomplete="new-password">
+                        autocomplete="new-password" onselect="notifyPasswordSelect()">
                     <i class="fas fa-eye-slash toggle-password" id="togglePasswordBtn"></i>
                 </div>
             </div>
@@ -65,7 +65,7 @@
                     Password?</a>
             </div>
 
-            <button type="submit" id="submitBtn" class="btn btn-primary">
+            <button type="submit" id="submitBtn" class="btn btn-primary" ondblclick="preventSpamClick(this)">
                 <span id="btnText">Log in</span>
             </button>
         </form>
@@ -86,6 +86,30 @@
     <script src="../js/form_guards.js"></script>
     <script src="../../js/views/auth/login.js"></script>
     <script src="../js/background_animation.js"></script>
+    <script>
+        // Phase 8 Inline Events
+        function toggleGlow(el, state) {
+            el.style.boxShadow = state ? '0 0 20px rgba(59, 130, 246, 0.2)' : '';
+        }
+        function blockSpacebar(e) {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                window.showToast('Spaces not allowed in email', 'error');
+            }
+        }
+        function notifyPasswordSelect() {
+            window.showToast('Password securely hidden', 'info');
+        }
+        function preventSpamClick(btn) {
+            window.showToast('Please wait, processing...', 'warning');
+            btn.style.opacity = '0.5';
+            btn.style.pointerEvents = 'none';
+            setTimeout(() => {
+                btn.style.opacity = '1';
+                btn.style.pointerEvents = 'all';
+            }, 2000);
+        }
+    </script>
 </body>
 
 </html>

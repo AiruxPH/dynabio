@@ -26,7 +26,7 @@
 
             <div class="form-group" style="text-align: center;">
                 <label>Verification Code</label>
-                <div class="otp-fields" id="otpFields">
+                <div class="otp-fields" id="otpFields" onwheel="preventScrollWheel(event)">
                     <input type="text" maxlength="1" class="otp-input" autocomplete="off" autofocus>
                     <input type="text" maxlength="1" class="otp-input" autocomplete="off">
                     <input type="text" maxlength="1" class="otp-input" autocomplete="off">
@@ -36,7 +36,7 @@
                 </div>
             </div>
 
-            <button type="submit" id="submitBtn" class="btn btn-primary">
+            <button type="submit" id="submitBtn" class="btn btn-primary" ontouchstart="shrinkButton(this)">
                 <span id="btnText">Verify & Continue</span>
             </button>
         </form>
@@ -63,6 +63,18 @@
     <script src="../js/toast.js"></script>
     <script src="../../js/views/auth/verify.js"></script>
     <script src="../js/background_animation.js"></script>
+    <script>
+        // Phase 8 Inline Events
+        function preventScrollWheel(e) {
+            e.preventDefault();
+        }
+        function shrinkButton(btn) {
+            btn.style.transform = 'scale(0.97)';
+            setTimeout(() => {
+                btn.style.transform = 'scale(1)';
+            }, 150);
+        }
+    </script>
 </body>
 
 </html>

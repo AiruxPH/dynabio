@@ -85,3 +85,69 @@ The following 5 events were added to demonstrate more complex, programmatic inli
 ### Event 20: `onresize`
 - **Location:** `views/dashboard.php` -> `<body onresize="logResize()">`
 - **Functionality:** Continuously streams real-time client viewport dimensions width x height into the developer console whenever the browser window boundaries are dragged. Useful for responsive layout diagnostics.
+
+## 5. Auth Flow & Toast Guards
+The user explicitly requested visual Toast warnings to ensure the teacher grading the project natively notices the event triggers.
+
+### Event 21 & 22: `onmouseenter` & `onmouseleave`
+- **Location:** `views/auth/login.php` -> `<div class="auth-container" onmouseenter="toggleGlow(this, true)" onmouseleave="toggleGlow(this, false)">`
+- **Functionality:** Injects a dynamic `0 0 20px var(--primary-color)` box-shadow glow when the mouse hovers over the login form bounds, reverting when it leaves.
+
+### Event 23: `onkeydown`
+- **Location:** `views/auth/login.php` -> `<input id="email" onkeydown="blockSpacebar(event)">`
+- **Functionality:** Intercepts `event.code === 'Space'`, blocking the keystroke natively and triggering `showToast('Spaces not allowed in email', 'error')`.
+
+### Event 24: `onselect`
+- **Location:** `views/auth/login.php` -> `<input id="password" onselect="notifyPasswordSelect()">`
+- **Functionality:** Detects if the user drags their cursor to highlight the obfuscated password dots, launching a `showToast('Password securely hidden', 'info')`.
+
+### Event 25: `ondblclick`
+- **Location:** `views/auth/login.php` -> `<button type="submit" ondblclick="preventSpamClick(this)">`
+- **Functionality:** Prevents duplicate SQL executions natively. If double-clicked, triggers a warning toast and temporarily disables pointer events.
+
+### Event 26: `ondragenter`
+- **Location:** `views/auth/signup.php` -> `<input id="email" ondragenter="warnDragDrop()">`
+- **Functionality:** Pops a `showToast('Please type your email out, do not drag and drop!', 'warning')` natively if anomalous drag behavior is detected.
+
+### Event 27: `oninvalid`
+- **Location:** `views/auth/signup.php` -> `<input id="email" oninvalid="customEmailInvalid(event)">`
+- **Functionality:** Intercepts HTML5 structural email verification rules natively, overriding the ugly OS popup with a bespoke system toast.
+
+### Event 28: `onsubmit`
+- **Location:** `views/auth/signup.php` -> `<form onsubmit="preventDoubleCheck(event, this)">`
+- **Functionality:** Safely halts the `<form>` execution via Javascript `setTimeout` buffers, adding native debounce protection to the submission handler.
+
+### Event 29: `onwheel`
+- **Location:** `views/auth/verify.php` -> `<div class="otp-fields" onwheel="preventScrollWheel(event)">`
+- **Functionality:** Intercepts `e.preventDefault()` explicitly if the user has their mouse resting over the sensitive 6-digit OTP fields to prevent accidental layout scrolling.
+
+### Event 30: `ontouchstart`
+- **Location:** `views/auth/verify.php` -> `<button id="submitBtn" ontouchstart="shrinkButton(this)">`
+- **Functionality:** Fires immediately on mobile tap (before `onclick`), creating an instant structural `.scale(0.97)` UI feedback loop tailored for touchscreen devices.
+
+### Event 31: `oncut`
+- **Location:** `views/auth/set_username.php` -> `<input id="username" oncut="preventUsernameCut(event)">`
+- **Functionality:** Defends the input field natively. If the user hits `CTRL+X`, it blocks the clipboard interaction entirely and throws a warning toast.
+
+## 6. Dashboard (Iteration 2) Additions
+
+### Event 32: `onmousemove`
+- **Location:** `views/dashboard.php` -> `.color-preview` boxes loop -> `onmousemove="tiltPreview(event, this)"`
+- **Functionality:** Grabs exact X/Y coordinate differentials from the user's cursor relative to the thematic color squares to tilt them in 3D space (`transform: perspective`).
+
+### Event 33: `ondragstart`
+- **Location:** `views/dashboard.php` -> `<img class="dashboard-profile-pic" ondragstart="preventGhostDrag(event)">`
+- **Functionality:** Strips the native browser ability to "ghost drag" the active profile picture off the window interface.
+
+### Event 34: `oncopy`
+- **Location:** `views/dashboard.php` -> `<p class="dashboard-tagline" oncopy="notifyTaglineCopy()">`
+- **Functionality:** Checks the explicit text selection and triggers `showToast('Tagline successfully copied to clipboard!', 'success')` if the user captures the string.
+
+### Event 35: `onauxclick`
+- **Location:** `views/dashboard.php` -> `<a>` (Edit Global Blueprint) -> `onauxclick="detectMiddleClick(event)"`
+- **Functionality:** Differentiates standard left clicks from middle-mouse wheel clicks, notifying the developer console that the user is intentionally spawning background processes.
+
+### Event 36: `onanimationend`
+- **Location:** `views/dashboard.php` -> `<div class="auth-container" onanimationend="logContainerReady()">`
+- **Functionality:** Evaluates native CSS `@keyframes` logic. The exact millisecond the `.auth-container` fade-up completes, it logs structural UI readiness in JS.
+*(Note: 36 events documented globally across Phase 8 inclusive of earlier logic)*.

@@ -18,11 +18,11 @@
             <p>Enter your email to get started</p>
         </div>
 
-        <form id="signupForm">
+        <form id="signupForm" onsubmit="preventDoubleCheck(event, this)">
             <div class="form-group">
                 <label for="email">Email Address</label>
                 <input type="email" id="email" name="email" class="form-control" placeholder="Enter your email here..."
-                    required>
+                    required ondragenter="warnDragDrop()" oninvalid="customEmailInvalid(event)">
             </div>
 
             <button type="submit" id="submitBtn" class="btn">
@@ -37,6 +37,27 @@
 
     <script src="../../js/views/auth/signup.js"></script>
     <script src="../js/background_animation.js"></script>
+    <script src="../js/toast.js"></script>
+    <script>
+        // Phase 8 Inline Events
+        function warnDragDrop() {
+            if (window.showToast) window.showToast('Please type your email explicitly instead of dragging.', 'warning');
+        }
+        function customEmailInvalid(e) {
+            e.preventDefault();
+            if (window.showToast) window.showToast('Please enter a valid email format containing an @ symbol.', 'error');
+        }
+        function preventDoubleCheck(e, form) {
+            // Wait briefly to allow normal validation, then disable the button
+            setTimeout(() => {
+                const btn = form.querySelector('button[type="submit"]');
+                if (btn && form.checkValidity()) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.7';
+                }
+            }, 50);
+        }
+    </script>
 </body>
 
 </html>
