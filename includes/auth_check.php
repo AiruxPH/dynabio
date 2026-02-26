@@ -1,5 +1,6 @@
 <?php
 // includes/auth_check.php
+require_once __DIR__ . '/error_handler.php';
 
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {

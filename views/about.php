@@ -18,6 +18,14 @@
         <div class="about-header">
             <h1>About DynaBio</h1>
             <p>The next generation of dynamic personal portfolios.</p>
+            <div style="margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: center;">
+                <a href="https://dynabio.ccsblock2.com" target="_blank"
+                    style="padding: 0.6rem 1.2rem; background: #3b82f6; color: white; text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 0.9rem; transition: background 0.2s;"><i
+                        class="fas fa-external-link-alt" style="margin-right: 6px;"></i> Live Demo</a>
+                <a href="https://github.com/AiruxPH/dynabio" target="_blank"
+                    style="padding: 0.6rem 1.2rem; background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 0.9rem; transition: background 0.2s;"><i
+                        class="fab fa-github" style="margin-right: 6px;"></i> Source Code</a>
+            </div>
         </div>
 
         <div class="mission-statement">
