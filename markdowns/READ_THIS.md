@@ -1,0 +1,1 @@
+# NOTICE: This is where i put my prompts that were used to create this project using these markdown files.
