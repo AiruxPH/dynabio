@@ -210,6 +210,7 @@ if (biodataForm) {
             place_of_birth: getVal('place_of_birth'),
             citizenship: getVal('citizenship'),
             gender: getVal('gender'),
+            date_of_birth: getVal('date_of_birth'),
             civil_status: getVal('civil_status'),
             religion: getVal('religion'),
             height: getVal('height'),

@@ -6,330 +6,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $errorState ? 'Not Found' : $fullName . ' - DynaBio'; ?></title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/ef9baa832e.js" crossorigin="anonymous"></script>
+    <link href="<?php echo ACTUAL_WEB_URL; ?>/css/font-google-inter.css" rel="stylesheet">
+    <script src="<?php echo ACTUAL_WEB_URL; ?>/js/font-awesome/ef9baa832e.js"></script>
     <link rel="stylesheet" href="style.css?v=2.0">
     <link rel="stylesheet" href="css/themes.css?v=1.0">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color, #050505);
-            color: var(--text-primary, #f3f4f6);
-            min-height: 100vh;
-            padding: 3rem 1rem;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        .container-col {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            max-width: 650px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 10;
-        }
-
-        /* Module Structure */
-        .module-card {
-            background: var(--card-bg, rgba(255, 255, 255, 0.03));
-            border: 1px solid var(--card-border, rgba(255, 255, 255, 0.08));
-            border-radius: 20px;
-            padding: 3rem;
-            width: 100%;
-            box-sizing: border-box;
-            box-shadow: var(--card-shadow, 0 8px 32px 0 rgba(0, 0, 0, 0.5));
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-
-        /* Identity Basics */
-        .identity-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
-
-        .avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid var(--primary-color, #fff);
-            box-shadow: 0 0 20px var(--primary-glow, rgba(255, 255, 255, 0.15));
-            margin-bottom: 1.5rem;
-        }
-
-        .name {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin: 0;
-            color: var(--primary-color, #fff);
-        }
-
-        .tagline {
-            font-size: 1.1rem;
-            color: var(--text-secondary, #a1a1aa);
-            font-weight: 400;
-            margin: 0.5rem 0 0 0;
-        }
-
-        .location {
-            font-size: 0.9rem;
-            color: var(--text-secondary, #a1a1aa);
-            margin-top: 0.5rem;
-        }
-
-        .divider {
-            width: 50px;
-            height: 4px;
-            background: var(--primary-color, #fff);
-            border-radius: 2px;
-            margin: 2rem auto;
-            box-shadow: 0 0 10px var(--primary-glow);
-        }
-
-        .about {
-            font-size: 1rem;
-            line-height: 1.7;
-            color: var(--text-primary);
-            margin-bottom: 2rem;
-        }
-
-        /* Tags & Links */
-        .skills-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            justify-content: center;
-            margin-bottom: 2.5rem;
-        }
-
-        .skill-badge {
-            background: var(--tag-bg);
-            color: var(--tag-text);
-            border: 1px solid var(--tag-border);
-            padding: 0.5rem 1rem;
-            border-radius: 9999px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .social-btn {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--primary-color, #fff);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            font-size: 1.25rem;
-            transition: all 0.3s ease;
-        }
-
-        .social-btn:hover {
-            transform: translateY(-5px);
-            background: var(--primary-color, #fff);
-            color: var(--bg-color);
-            box-shadow: 0 10px 20px var(--primary-glow);
-        }
-
-        /* Timeline Journey */
-        .module-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin: 0 0 2rem 0;
-            text-align: center;
-        }
-
-        .timeline-wrapper {
-            position: relative;
-            padding-left: 2rem;
-        }
-
-        .timeline-wrapper::before {
-            content: '';
-            position: absolute;
-            left: 10px;
-            top: 10px;
-            bottom: 10px;
-            width: 2px;
-            background: var(--primary-color);
-            opacity: 0.2;
-            border-radius: 2px;
-        }
-
-        .t-item {
-            position: relative;
-            margin-bottom: 2.5rem;
-        }
-
-        .t-item:last-child {
-            margin-bottom: 0;
-        }
-
-        .t-icon {
-            position: absolute;
-            left: -2rem;
-            top: 0;
-            width: 22px;
-            height: 22px;
-            transform: translateX(-40%);
-            border-radius: 50%;
-            background: var(--bg-color);
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.6rem;
-            box-shadow: 0 0 10px var(--primary-glow);
-        }
-
-        .t-date {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-            display: block;
-        }
-
-        .t-title {
-            font-size: 1.1rem;
-            color: var(--primary-color);
-            margin: 0 0 0.5rem 0;
-            font-weight: 600;
-        }
-
-        .t-desc {
-            font-size: 0.95rem;
-            color: var(--text-primary);
-            line-height: 1.6;
-            margin: 0;
-            opacity: 0.9;
-        }
-
-        /* GitHub Live Activity */
-        .repo-card {
-            display: block;
-            text-decoration: none;
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 1.25rem;
-            border-radius: 12px;
-            margin-bottom: 1rem;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-
-        .repo-card:hover {
-            transform: translateX(5px);
-            border-color: var(--primary-color);
-        }
-
-        .repo-title {
-            margin: 0 0 0.25rem 0;
-            color: var(--text-primary);
-            font-size: 1rem;
-            font-weight: 600;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .repo-desc {
-            margin: 0 0 0.75rem 0;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            line-height: 1.4;
-        }
-
-        .repo-meta {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .repo-meta span {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .footer-branding {
-            text-align: center;
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-size: 0.8rem;
-            display: block;
-            opacity: 0.6;
-            transition: opacity 0.3s;
-            margin-top: 1rem;
-        }
-
-        .footer-branding:hover {
-            opacity: 1;
-            color: var(--text-primary);
-        }
-
-        /* 404 State */
-        .error-state {
-            text-align: center;
-        }
-
-        .error-state i {
-            font-size: 4rem;
-            color: #ef4444;
-            margin-bottom: 1rem;
-        }
-
-        .back-btn {
-            position: absolute;
-            top: 2rem;
-            left: 2rem;
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.3s ease;
-            z-index: 100;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-        }
-
-        .back-btn:hover {
-            color: var(--primary-color, #fff);
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-2px);
-        }
-
-        @media (max-width: 768px) {
-            .back-btn {
-                top: 1rem;
-                left: 1rem;
-                padding: 0.4rem 0.8rem;
-                font-size: 0.8rem;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="<?php echo ACTUAL_WEB_URL; ?>/css/views/public.css?v=2.0">
 </head>
 
 <body onload="logGreeting()" oncopy="warnCopy()" oncontextmenu="protectContent(event)" onscroll="handlePublicScroll()">
@@ -401,6 +82,129 @@
                             <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
+                </div>
+
+                <!-- MODULE 1.5: STANDARD BIODATA FORM -->
+                <div class="module-card">
+                    <h2 class="module-title"><i class="fas fa-address-card"></i> Personal Biodata</h2>
+
+                    <div class="glass-biodata-container">
+                        <div class="glass-biodata-header">
+                            <i class="fas fa-user-tie"></i> I. Personal Information
+                        </div>
+
+                        <div class="glass-biodata-row">
+                            <div class="glass-biodata-label">Full Name</div>
+                            <div class="glass-biodata-value"><strong><?php echo htmlspecialchars($fullName); ?></strong></div>
+                        </div>
+
+                        <?php if (!empty($profile['nickname'])): ?>
+                            <div class="glass-biodata-row">
+                                <div class="glass-biodata-label">Nickname</div>
+                                <div class="glass-biodata-value"><?php echo htmlspecialchars($profile['nickname']); ?></div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($profile['position_desired'])): ?>
+                            <div class="glass-biodata-row">
+                                <div class="glass-biodata-label">Position Desired</div>
+                                <div class="glass-biodata-value"><?php echo htmlspecialchars($profile['position_desired']); ?></div>
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="glass-biodata-row">
+                            <div class="glass-biodata-label">Gender</div>
+                            <div class="glass-biodata-value"><?php echo htmlspecialchars($profile['gender'] ?? '---'); ?></div>
+                        </div>
+
+                        <div class="glass-biodata-row">
+                            <div class="glass-biodata-label">Date of Birth</div>
+                            <div class="glass-biodata-value">
+                                <?php if (!empty($profile['date_of_birth'])): ?>
+                                    <?php
+                                    $dob = new DateTime($profile['date_of_birth']);
+                                    $now = new DateTime();
+                                    $age = $now->diff($dob)->y;
+                                    echo date('F j, Y', strtotime($profile['date_of_birth'])) . ' (Age ' . $age . ')';
+                                    ?>
+                                <?php else: ?>
+                                    ---
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <div class="glass-biodata-row">
+                            <div class="glass-biodata-label">Civil Status</div>
+                            <div class="glass-biodata-value"><?php echo htmlspecialchars($profile['civil_status'] ?? '---'); ?>
+                            </div>
+                        </div>
+
+                        <div class="glass-biodata-row">
+                            <div class="glass-biodata-label">Citizenship</div>
+                            <div class="glass-biodata-value"><?php echo htmlspecialchars($profile['citizenship'] ?? '---'); ?>
+                            </div>
+                        </div>
+
+                        <div class="glass-biodata-row">
+                            <div class="glass-biodata-label">Religion</div>
+                            <div class="glass-biodata-value"><?php echo htmlspecialchars($profile['religion'] ?? '---'); ?>
+                            </div>
+                        </div>
+
+                        <div class="glass-biodata-row">
+                            <div class="glass-biodata-label">Place of Birth</div>
+                            <div class="glass-biodata-value">
+                                <?php echo htmlspecialchars($profile['place_of_birth'] ?? '---'); ?>
+                            </div>
+                        </div>
+
+                        <div class="glass-biodata-row">
+                            <div class="glass-biodata-label">Height / Weight</div>
+                            <div class="glass-biodata-value">
+                                <?php echo htmlspecialchars($profile['height'] ?? '---'); ?> /
+                                <?php echo htmlspecialchars($profile['weight'] ?? '---'); ?>
+                            </div>
+                        </div>
+
+                        <div class="glass-biodata-row">
+                            <div class="glass-biodata-label">Address</div>
+                            <div class="glass-biodata-value">
+                                <?php echo htmlspecialchars($profile['present_address'] ?? $profile['location'] ?? '---'); ?>
+                            </div>
+                        </div>
+                    </div>
+
+                    <?php
+                    if (!empty($profile['family_background'])):
+                        $fb = json_decode($profile['family_background'], true);
+                        if (is_array($fb) && (!empty($fb['spouse']) || !empty($fb['children']) || !empty($fb['parents']))):
+                            ?>
+                            <div class="glass-biodata-container" style="margin-top: 1.5rem;">
+                                <div class="glass-biodata-header">
+                                    <i class="fas fa-users"></i> II. Family Background
+                                </div>
+                                <?php if (!empty($fb['spouse'])): ?>
+                                    <div class="glass-biodata-row">
+                                        <div class="glass-biodata-label">Spouse</div>
+                                        <div class="glass-biodata-value"><?php echo htmlspecialchars($fb['spouse']); ?></div>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if (!empty($fb['children'])): ?>
+                                    <div class="glass-biodata-row">
+                                        <div class="glass-biodata-label">Children</div>
+                                        <div class="glass-biodata-value"><?php echo htmlspecialchars($fb['children']); ?></div>
+                                    </div>
+                                <?php endif; ?>
+                                <?php if (!empty($fb['parents'])): ?>
+                                    <div class="glass-biodata-row">
+                                        <div class="glass-biodata-label">Parents</div>
+                                        <div class="glass-biodata-value"><?php echo htmlspecialchars($fb['parents']); ?></div>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endif; endif; ?>
+
+
                 </div>
 
                 <!-- MODULE 2: GITHUB LIVE ACTIVITY -->

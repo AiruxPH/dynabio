@@ -1,3 +1,12 @@
+<?php
+if (!defined('ACTUAL_WEB_URL')) {
+    require_once __DIR__ . '/../../includes/config.php';
+}
+if (basename($_SERVER['PHP_SELF']) === 'forgot_password.php' && strpos($_SERVER['PHP_SELF'], '/views/auth/') !== false) {
+    header("Location: " . ACTUAL_WEB_URL . "/auth/forgot_password.php");
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,9 +14,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot Password - Dynabio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/ef9baa832e.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="../style.css?v=2.0">
+    <link href="<?php echo ACTUAL_WEB_URL; ?>/css/font-google-inter.css" rel="stylesheet">
+    <script src="<?php echo ACTUAL_WEB_URL; ?>/js/font-awesome/ef9baa832e.js"></script>
+    <link rel="stylesheet" href="<?php echo ACTUAL_WEB_URL; ?>/style.css?v=2.0">
 </head>
 
 <body>
@@ -38,9 +47,9 @@
         </div>
     </div>
 
-    <script src="../js/toast.js"></script>
-    <script src="../../js/views/auth/forgot_password.js"></script>
-    <script src="../js/background_animation.js"></script>
+    <script src="<?php echo ACTUAL_WEB_URL; ?>/js/toast.js"></script>
+    <script src="<?php echo ACTUAL_WEB_URL; ?>/js/views/auth/forgot_password.js"></script>
+    <script src="<?php echo ACTUAL_WEB_URL; ?>/js/background_animation.js"></script>
 </body>
 
 </html>

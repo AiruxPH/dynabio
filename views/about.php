@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - Dynabio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/ef9baa832e.js" crossorigin="anonymous"></script>
+    <title>About - Dynabio</title>
+    <link href="<?php echo ACTUAL_WEB_URL; ?>/css/font-google-inter.css" rel="stylesheet">
+    <script src="<?php echo ACTUAL_WEB_URL; ?>/js/font-awesome/ef9baa832e.js"></script>
     <link rel="stylesheet" href="style.css?v=3.0">
     <link rel="stylesheet" href="css/views/about.css?v=1.0">
 </head>
@@ -29,38 +29,37 @@
         </div>
 
         <div class="mission-statement">
-            <p>"We built DynaBio to give tech professionals, designers, and creatives a seamless, real-time platform to
-                showcase their journey, share their skills, and control their digital identity without ever touching a
-                line of code."</p>
+            <p>"DynaBio is my custom-built digital space—a dynamic, real-time platform designed to showcase my journey,
+                share my skills, and present my professional identity without relying on third-party templates."</p>
         </div>
 
         <div class="feature-grid">
             <div class="feature-card">
                 <i class="fas fa-palette feature-icon"></i>
-                <h3>Dynamic Theming</h3>
-                <p>Instantly switch between 8 pre-built aesthetic themes including Glassmorphism, Cyberpunk, and
-                    Solarized styles to match your personal brand.</p>
+                <h3>Personalized Styling</h3>
+                <p>Visitors can instantly switch between 8 pre-built aesthetic themes including Glassmorphism,
+                    Cyberpunk, and Solarized styles to view the portfolio from a new perspective.</p>
             </div>
 
             <div class="feature-card">
                 <i class="fas fa-shield-alt feature-icon"></i>
-                <h3>Secure Authentication</h3>
-                <p>Protected by modern PDO standards, email-driven 6-digit OTP verification, and strict session
-                    management routing.</p>
+                <h3>Backend Architecture</h3>
+                <p>The underlying engine is protected by modern PHP PDO standards, secure session management, and robust
+                    authentication routing.</p>
             </div>
 
             <div class="feature-card">
                 <i class="fas fa-route feature-icon"></i>
-                <h3>Journey Timeline</h3>
-                <p>Drag, drop, and construct a visual timeline of your education, certifications, and career milestones
-                    for visitors to explore.</p>
+                <h3>Interactive Journey</h3>
+                <p>Explore a visual, chronological timeline of my education, certifications, and career milestones
+                    fetched dynamically from the database.</p>
             </div>
 
             <div class="feature-card">
-                <i class="fas fa-globe feature-icon"></i>
-                <h3>Public Engine</h3>
-                <p>Generate a clean, SEO-friendly public URL `dynabio/view.php?u=username` that safely serves your data
-                    to the world.</p>
+                <i class="fas fa-file-alt feature-icon"></i>
+                <h3>Instant Export</h3>
+                <p>Seamlessly compile and download my live biodata, skills, and timeline into a clean, structured
+                    plaintext resume with a single click.</p>
             </div>
         </div>
 

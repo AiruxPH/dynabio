@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Bio - DynaBio</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/ef9baa832e.js" crossorigin="anonymous"></script>
+    <link href="<?php echo ACTUAL_WEB_URL; ?>/css/font-google-inter.css" rel="stylesheet">
+    <script src="<?php echo ACTUAL_WEB_URL; ?>/js/font-awesome/ef9baa832e.js"></script>
     <link rel="stylesheet" href="../style.css?v=2.0">
     <link rel="stylesheet" href="../css/views/editor.css?v=2.0">
 </head>
@@ -141,6 +141,11 @@
                             <div class="form-group">
                                 <label>Gender</label>
                                 <input type="text" id="gender" class="form-control" value="<?php echo $gender; ?>">
+                            </div>
+                            <div class="form-group">
+                                <label>Date of Birth</label>
+                                <input type="date" id="date_of_birth" class="form-control"
+                                    value="<?php echo $dateOfBirth; ?>">
                             </div>
                             <div class="form-group">
                                 <label>Civil Status</label>
@@ -335,7 +340,7 @@
     </script>
     <script src="../js/toast.js"></script>
     <script src="../js/form_guards.js"></script>
-    <script src="../js/views/editor.js"></script>
+    <script src="../js/views/editor.js?v=3.0"></script>
 
     <?php include __DIR__ . '/../includes/username_modal.php'; ?>
     <script src="../js/background_animation.js"></script>

@@ -78,7 +78,8 @@ async function loadRecentLogins() {
     // Synchronize with backend dynamically
     if (logins.length > 0) {
         try {
-            const response = await fetch('action_sync_accounts.php', {
+            const syncUrl = window.ACTUAL_WEB_URL ? window.ACTUAL_WEB_URL + '/auth/action_sync_accounts.php' : 'action_sync_accounts.php';
+            const response = await fetch(syncUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ accounts: logins })
@@ -254,7 +255,8 @@ if (loginForm) {
         }
 
         try {
-            const response = await fetch('action_login.php', {
+            const loginUrl = window.ACTUAL_WEB_URL ? window.ACTUAL_WEB_URL + '/auth/action_login.php' : 'action_login.php';
+            const response = await fetch(loginUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: email, password: password, remember: remember })

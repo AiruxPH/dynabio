@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once __DIR__ . '/../includes/db.php';
 
 // Set JSON response headers
@@ -56,6 +58,7 @@ $provincial_address = isset($data['provincial_address']) ? trim($data['provincia
 $place_of_birth = isset($data['place_of_birth']) ? trim($data['place_of_birth']) : '';
 $citizenship = isset($data['citizenship']) ? trim($data['citizenship']) : '';
 $gender = isset($data['gender']) ? trim($data['gender']) : '';
+$date_of_birth = isset($data['date_of_birth']) && !empty(trim($data['date_of_birth'])) ? trim($data['date_of_birth']) : null;
 $civil_status = isset($data['civil_status']) ? trim($data['civil_status']) : '';
 $religion = isset($data['religion']) ? trim($data['religion']) : '';
 $height = isset($data['height']) ? trim($data['height']) : '';
@@ -74,7 +77,7 @@ try {
         $sql = "UPDATE biodata SET 
             full_name = ?, tagline = ?, about_me = ?, location = ?, 
             position_desired = ?, nickname = ?, present_address = ?, provincial_address = ?, 
-            place_of_birth = ?, citizenship = ?, gender = ?, civil_status = ?, religion = ?, 
+            place_of_birth = ?, citizenship = ?, gender = ?, date_of_birth = ?, civil_status = ?, religion = ?, 
             height = ?, weight = ?, family_background = ?, github_username = ?, 
             social_links = ?, skills = ? 
             WHERE user_id = ?";
@@ -92,6 +95,7 @@ try {
             $place_of_birth,
             $citizenship,
             $gender,
+            $date_of_birth,
             $civil_status,
             $religion,
             $height,
@@ -106,8 +110,8 @@ try {
     } else {
         // Phase 2 Insert Query (Defaulting theme to 'default-glass')
         $sql = "INSERT INTO biodata 
-            (user_id, theme, full_name, tagline, about_me, location, position_desired, nickname, present_address, provincial_address, place_of_birth, citizenship, gender, civil_status, religion, height, weight, family_background, github_username, social_links, skills) 
-            VALUES (?, 'default-glass', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            (user_id, theme, full_name, tagline, about_me, location, position_desired, nickname, present_address, provincial_address, place_of_birth, citizenship, gender, date_of_birth, civil_status, religion, height, weight, family_background, github_username, social_links, skills) 
+            VALUES (?, 'default-glass', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $insertStmt = $conn->prepare($sql);
         $insertStmt->execute([
@@ -123,6 +127,7 @@ try {
             $place_of_birth,
             $citizenship,
             $gender,
+            $date_of_birth,
             $civil_status,
             $religion,
             $height,

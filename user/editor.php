@@ -29,6 +29,7 @@ $presentAddress = $biodata ? htmlspecialchars((string) ($biodata['present_addres
 $provincialAddress = $biodata ? htmlspecialchars((string) ($biodata['provincial_address'] ?? '')) : '';
 $placeOfBirth = $biodata ? htmlspecialchars((string) ($biodata['place_of_birth'] ?? '')) : '';
 $gender = $biodata ? htmlspecialchars((string) ($biodata['gender'] ?? '')) : '';
+$dateOfBirth = $biodata ? htmlspecialchars((string) ($biodata['date_of_birth'] ?? '')) : '';
 $civilStatus = $biodata ? htmlspecialchars((string) ($biodata['civil_status'] ?? '')) : '';
 $citizenship = $biodata ? htmlspecialchars((string) ($biodata['citizenship'] ?? '')) : '';
 $religion = $biodata ? htmlspecialchars((string) ($biodata['religion'] ?? '')) : '';

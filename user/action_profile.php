@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 header('Content-Type: application/json');
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth_utils.php';
@@ -70,43 +72,57 @@ if ($action === 'update_profile') {
             $newHeight = (int) floor(($origHeight / $origWidth) * $maxWidth);
         }
 
-        $srcImage = null;
-        switch ($imageType) {
-            case IMAGETYPE_JPEG:
-                $srcImage = imagecreatefromjpeg($sourceFile);
-                break;
-            case IMAGETYPE_PNG:
-                $srcImage = imagecreatefrompng($sourceFile);
-                break;
-            case IMAGETYPE_GIF:
-                $srcImage = imagecreatefromgif($sourceFile);
-                break;
-            case IMAGETYPE_WEBP:
-                $srcImage = imagecreatefromwebp($sourceFile);
-                break;
-        }
-
-        if ($srcImage) {
-            $destImage = imagecreatetruecolor($newWidth, $newHeight);
-
-            // Handle transparency for PNG/GIF -> JPG
-            if ($imageType == IMAGETYPE_PNG || $imageType == IMAGETYPE_GIF) {
-                $white = imagecolorallocate($destImage, 255, 255, 255);
-                imagefill($destImage, 0, 0, $white);
+        if (function_exists('imagecreatefromjpeg')) {
+            $srcImage = null;
+            switch ($imageType) {
+                case IMAGETYPE_JPEG:
+                    $srcImage = imagecreatefromjpeg($sourceFile);
+                    break;
+                case IMAGETYPE_PNG:
+                    $srcImage = imagecreatefrompng($sourceFile);
+                    break;
+                case IMAGETYPE_GIF:
+                    $srcImage = imagecreatefromgif($sourceFile);
+                    break;
+                case IMAGETYPE_WEBP:
+                    if (function_exists('imagecreatefromwebp')) {
+                        $srcImage = imagecreatefromwebp($sourceFile);
+                    }
+                    break;
             }
 
-            imagecopyresampled($destImage, $srcImage, 0, 0, 0, 0, $newWidth, $newHeight, $origWidth, $origHeight);
+            if ($srcImage) {
+                $destImage = imagecreatetruecolor($newWidth, $newHeight);
 
-            if (imagejpeg($destImage, $targetDir . $filename, 85)) {
-                $photoPath = 'images/profiles/' . $filename;
+                // Handle transparency for PNG/GIF -> JPG
+                if ($imageType == IMAGETYPE_PNG || $imageType == IMAGETYPE_GIF) {
+                    $white = imagecolorallocate($destImage, 255, 255, 255);
+                    imagefill($destImage, 0, 0, $white);
+                }
+
+                imagecopyresampled($destImage, $srcImage, 0, 0, 0, 0, $newWidth, $newHeight, $origWidth, $origHeight);
+
+                if (imagejpeg($destImage, $targetDir . $filename, 85)) {
+                    $photoPath = 'images/profiles/' . $filename;
+                } else {
+                    jsonResponse(false, 'Failed to save compressed image. (Check directory permissions)');
+                }
+
+                imagedestroy($srcImage);
+                imagedestroy($destImage);
             } else {
-                jsonResponse(false, 'Failed to save compressed image.');
+                jsonResponse(false, 'Failed to process image format using GD library.');
             }
-
-            imagedestroy($srcImage);
-            imagedestroy($destImage);
         } else {
-            jsonResponse(false, 'Failed to process image format.');
+            // Fallback: GD Library is not enabled in PHP. Just move the file directly.
+            // We use the original extension for safety since we aren't converting to JPG
+            $ext = pathinfo($_FILES['photo']['name'], PATHINFO_EXTENSION);
+            $fallbackFilename = 'user_' . $user_id . '_' . time() . '.' . $ext;
+            if (move_uploaded_file($sourceFile, $targetDir . $fallbackFilename)) {
+                $photoPath = 'images/profiles/' . $fallbackFilename;
+            } else {
+                jsonResponse(false, 'Failed to upload image. (Check PHP GD extension and directory permissions)');
+            }
         }
     }
 

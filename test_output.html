@@ -1,0 +1,153 @@
+
+Warning: Constant ACTUAL_WEB_URL already defined in D:\xampp\htdocs\dynabio\includes\config.php on line 33
+<!DOCTYPE html>
+<html lang="en" data-theme="default-glass">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Dynabio</title>
+    <link href="http://localhost/dynabio/css/font-google-inter.css" rel="stylesheet">
+    <script src="http://localhost/dynabio/js/font-awesome/ef9baa832e.js"></script>
+    <link rel="stylesheet" href="style.css?v=3.0">
+    <link rel="stylesheet" href="css/themes.css?v=3.0">
+</head>
+
+<body class="layout-dashboard" onresize="logResize()">
+
+    <nav class="navbar">
+        <div class="navbar-brand">Dynabio</div>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <a href="about.php"
+                style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.875rem; transition: color 0.2s ease;">About
+                Us</a>
+                            <a href="themes.php"
+                    style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.875rem; transition: color 0.2s ease;">Themes</a>
+                        <a href="user/profile.php"
+                style="color: #cbd5e1; text-decoration: none; font-weight: 500; font-size: 0.875rem; transition: color 0.2s ease;">My
+                Profile</a>
+            <a href="auth/logout.php" class="logout-btn">Log out</a>
+        </div>
+    </nav>
+
+    <link rel="stylesheet" href="css/views/dashboard.css?v=3.0">
+    <!-- Using public.css for the portfolio layout styles -->
+    <link rel="stylesheet" href="css/views/public.css?v=2.0">
+    <style>
+        .layout-dashboard .container {
+            max-width: 800px;
+            /* Portfolio style width */
+            padding: 0;
+        }
+
+        .action-bar {
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-radius: 12px;
+        }
+    </style>
+
+    <div class="container" onanimationend="logContainerReady()">
+
+        <div class="action-bar">
+            <!-- Both users and the owner can download the biodata -->
+            <a href="download.php" class="btn-view" style="font-size: 0.9rem; padding: 0.5rem 1rem;">
+                <i class="fas fa-download"></i> Download Biodata
+            </a>
+
+            <!-- Only the SITE_OWNER can edit the biodata -->
+                            <a href="user/editor.php" class="btn-edit" style="font-size: 0.9rem; padding: 0.5rem 1rem;"
+                    onauxclick="detectMiddleClick(event)">
+                    <i class="fas fa-pen-nib"></i> Edit Biodata
+                </a>
+                    </div>
+
+        
+            <div class="profile-layout">
+                <!-- MODULE 1: IDENTITY -->
+                <div class="module-card identity-wrapper">
+                    <div class="header">
+                        <img src="images/default.png" alt="Avatar"
+                            class="avatar" onmouseover="zoomProfile(this)" onmouseout="unzoomProfile(this)"
+                            ondragstart="preventGhostDrag(event)">
+                        <h1 class="name" ondblclick="highlightWelcome(this)">Anecito Randy E. Calunod Jr.</h1>
+                                                    <h2 class="tagline" oncopy="notifyTaglineCopy()">Innovation Enthusiast trying to reach new heights.</h2>                                                    <div class="location"><i class="fas fa-map-marker-alt"></i> Ozamiz, Misamis Occidental, Philippines</div>
+                                            </div>
+
+                    <div class="divider"></div>
+
+                                            <div class="about">I am Anecito Randy E. Calunod Jr.</div>
+                    
+                                            <div class="skills-grid">
+                                                            <span class="skill-badge">programming</span>
+                                                            <span class="skill-badge">reading</span>
+                                                            <span class="skill-badge">sleeping</span>
+                                                    </div>
+                    
+                                            <div class="social-links">
+                                                                                            <a href="https://github.com/AiruxPH" target="_blank" class="social-btn"
+                                    aria-label="Github">
+                                    <i class="fa-brands fa-github"></i>
+                                </a>
+                                                                                            <a href="https://www.faceboook.com/randythegreat000" target="_blank" class="social-btn"
+                                    aria-label="Facebook">
+                                    <i class="fa-brands fa-facebook-f"></i>
+                                </a>
+                                                    </div>
+                                    </div>
+
+                <!-- MODULE 2: GITHUB LIVE ACTIVITY -->
+                
+                <!-- MODULE 3: THE JOURNEY (TIMELINE) -->
+                            </div>
+            </div>
+
+    <script>
+        window.DashboardData = {
+            currentTheme: "default-glass"        };
+    </script>
+    <script src="js/views/dashboard.js?v=4.0"></script>
+
+        <script src="js/background_animation.js"></script>
+    <script src="js/toast.js"></script>
+
+    <!-- Phase 8: Academic Inline Event Functions -->
+    <script>
+        function zoomProfile(element) {
+            element.style.transform = "scale(1.1)";
+            element.style.transition = "transform 0.3s ease";
+        }
+        function unzoomProfile(element) {
+            element.style.transform = "scale(1)";
+        }
+        function highlightWelcome(element) {
+            alert("Hello Dynabio! You double-clicked the name header.");
+            element.style.color = "var(--primary-color)";
+            element.style.textShadow = "0 0 10px var(--primary-color)";
+        }
+        function logResize() {
+            console.log(`Viewport dynamically resized to: ${window.innerWidth}px x ${window.innerHeight}px`);
+        }
+        function logContainerReady() {
+            console.log('Dashboard UI has finished rendering.');
+        }
+        function preventGhostDrag(e) {
+            e.preventDefault();
+        }
+        function notifyTaglineCopy() {
+            if (window.showToast) window.showToast('Tagline safely copied to clipboard!', 'success');
+        }
+        function detectMiddleClick(e) {
+            if (e.button === 1) {
+                console.log('Spawning editor in a background tab via middle-click.');
+            }
+        }
+    </script>
+</body>
+
+</html>

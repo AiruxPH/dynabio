@@ -29,8 +29,11 @@ function sendEmail($to, $subject, $body, $altBody = '')
     $mail = new PHPMailer(true);
 
     try {
-        // Server settings
-        $mail->SMTPDebug = SMTP::DEBUG_OFF; // Set to DEBUG_SERVER for troubleshooting
+        // Server settings — DEBUG_SERVER temporarily enabled to diagnose localhost issues
+        $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+        $mail->Debugoutput = function ($str, $level) {
+            error_log("PHPMailer[$level]: $str");
+        };
         $mail->isSMTP();
         $mail->Host = MAIL_HOST;
         $mail->SMTPAuth = true;
@@ -58,10 +61,11 @@ function sendEmail($to, $subject, $body, $altBody = '')
         $mail->setFrom(MAIL_FROM, MAIL_FROM_NAME);
         $mail->addAddress($to);
 
-        // Prevent replies directly to the system inbox
+        // Prevent replies directly to the system inbox (skip on localhost)
         $host = parse_url(ACTUAL_WEB_URL, PHP_URL_HOST);
-        $domain = $host ?: 'dynabio.com';
-        $mail->addReplyTo('noreply@' . $domain, 'No Reply');
+        if ($host && $host !== 'localhost' && $host !== '127.0.0.1') {
+            $mail->addReplyTo('noreply@' . $host, 'No Reply');
+        }
 
         // Content
         $mail->isHTML(true);

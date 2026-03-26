@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/mail_helper.php';
 
@@ -32,7 +34,8 @@ function sendVerificationEmail($email, $code, $type = 'signup')
     </div>
     ";
 
-    return sendEmail($email, $subject, $message);
+    $result = sendEmail($email, $subject, $message);
+    return $result['success'] ?? false;
 }
 
 /**

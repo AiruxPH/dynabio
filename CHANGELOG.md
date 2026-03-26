@@ -5,6 +5,58 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **19 Inline Event Listeners on Dashboard:**
+  - `onkeydown` — Ctrl+E keyboard shortcut to open editor, Home key scrolls to top.
+  - `onscroll` — Scroll spy shows/hides a floating scroll-to-top button.
+  - `onclick` (scroll button) — Smooth scroll to top with spin animation on hover.
+  - `onload` — Avatar glow pulse when profile image finishes loading.
+  - `onmousedown/onmouseup/ontouchstart/ontouchend` — Long-press avatar opens full-size lightbox overlay.
+  - `onclick` (location) — Copy location text to clipboard with toast notification.
+  - `onmouseenter` (divider) — Divider stretches with a glowing pulse effect.
+  - `onclick` (divider) — Mini confetti burst with 12 colored particles.
+  - `onselectstart` — Logs text selection from the About section.
+  - `onmouseenter` (skill badges) — Ripple scale-up glow effect.
+  - `onclick` (skill badges) — Spotlight: dims all other skills, highlights clicked one.
+  - `onclick` (social links) — Tracks and toasts which platform was clicked.
+  - `onfocus/onblur` (social links) — Glow effect on keyboard tab navigation.
+  - `onmousemove/onmouseleave` (identity card) — 3D parallax tilt following cursor.
+  - `onclick` (biodata title) — Collapse/expand biodata section with chevron animation.
+  - `onmouseenter/onmouseleave` (biodata card) — Border glow on hover.
+  - `oncontextmenu` — Custom right-click protection with toast warning.
+  - `ondblclick` (timeline title) — Reverses timeline order.
+  - Added `date_of_birth` DATE column to the `biodata` table (`database/schema_updates/add_date_of_birth.sql`).
+  - Added date picker input to the editor form (`views/editor.php`).
+  - Updated `editor.js` payload and `action_update_biodata.php` to save/load the new field.
+  - Age is now auto-calculated from DOB and displayed as `"Month Day, Year (Age X)"` on dashboard and public views.
+
+### Removed
+- **Applicant's Signature block** removed from both `views/dashboard.php` and `views/public.php`.
+
+### Fixed
+- **Corrupted `views/dashboard.php`:** Completely rewrote the file to fix severely corrupted HTML tags (e.g., `</di v>`, `<scr ipt>`, `func tion`) that caused `SyntaxError: Unexpected identifier 'tion'`.
+
+### Changed
+- **Biodata display:** "Gender / Age" row split into separate "Gender" and "Date of Birth" rows.
+
+
+- **Localhost Adaptation & Pathing Fixes:**
+  - Standardized authentication entry points to ensure consistent session handling and JavaScript pathing across environments.
+  - Implemented absolute redirects using `ACTUAL_WEB_URL` in all backend action scripts to resolve "stuck" login states on subfolder-based local setups (e.g., XAMPP `/dynabio/`).
+  - Addressed asset 404s by injecting `ACTUAL_WEB_URL` prefix into all `<link>` and `<script>` tags across all authentication views (`login`, `signup`, `verify`, etc.), preventing directory traversal errors when rendering via the `auth/` controllers.
+  - Added automatic redirection from `views/auth/` directly-accessed UI files to their respective controllers in `auth/`.
+  - Injected `ACTUAL_WEB_URL` into the frontend window object to enable robust absolute pathing for automated fetch requests in `login.js` and other auth scripts.
+  - Configured session cookies to dynamically detect SSL status, allowing secure session persistence on non-HTTPS `http://localhost`.
+  - Replaced all external Font Awesome script tags (`kit.fontawesome.com`) and Google Fonts link tags (`fonts.googleapis.com`) with local files (`js/font-awesome/ef9baa832e.js` and `css/font-google-inter.css`) across all 12 views. Downloaded all `.woff2` font variants to `fonts/inter/` to ensure 100% offline localhost compatibility.
+- **Single-User Portfolio Architecture (Phase 2):**
+  - Added `SITE_OWNER` constant to `config.php` hardcoded to `randythegreat` to establish a global profile anchor.
+  - Overhauled `index.php` (dashboard) to exclusively fetch and display the `SITE_OWNER`'s biodata, replacing the generic multi-user hub with the full public portfolio layout.
+  - Extracted the "Theme Picker" from the dashboard into a dedicated `themes.php` view, accessible via the navbar exclusively for the `SITE_OWNER`.
+  - Implemented conditional permission rendering on the dashboard: Only the `SITE_OWNER` sees the "Edit Biodata" button.
+  - Created a robust `download.php` endpoint that compiles the `SITE_OWNER`'s profile, tagline, skills, and chronological milestones into a neatly formatted `.txt` resume file, forced as a browser download.
+
+### Fixed
+- **API Network Errors:** Resolved "A network error occurred" during login by eliminating duplicate `session_start()` calls. Added `session_status() === PHP_SESSION_NONE` checks to `auth_utils.php` and all JSON API controllers to prevent PHP Notices from corrupting backend JSON responses.
+- **Dashboard Include Error:** Corrected the path for the `username_modal.php` include in `views/dashboard.php` to accurately point to the root `includes/` directory.
 - **New User Onboarding Flows (Phase 11):** 
   - Overhauled core databade `LEFT JOIN` queries in `index.php` and `view.php` to actively detect absolute empty states when new users authenticate for the first time.
   - Injected a highly-visible, glowing call-to-action banner into `views/dashboard.php` specifically targeting new users, directing them immediately to the editor to configure their timeline and identity.

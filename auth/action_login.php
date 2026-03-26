@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 header('Content-Type: application/json');
 require_once __DIR__ . '/../includes/db.php';
 require_once __DIR__ . '/../includes/auth_utils.php';
@@ -41,7 +43,7 @@ try {
         }
 
         // < 24 hours, just not verified yet
-        jsonResponse(false, 'Your account is not verified. Please check your email. Redirecting...', 'verify.php?email=' . urlencode($user['email']));
+        jsonResponse(false, 'Your account is not verified. Please check your email. Redirecting...', ACTUAL_WEB_URL . '/auth/verify.php?email=' . urlencode($user['email']));
     }
 
     // Account is verified, check password
@@ -56,16 +58,18 @@ try {
 
     // If remember me is checked, extend the session cookie lifetime
     $params = session_get_cookie_params();
+    $is_secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+
     if ($remember) {
-        setcookie(session_name(), session_id(), time() + (86400 * 30), $params["path"], $params["domain"], $params["secure"], $params["httponly"]); // 30 days
+        setcookie(session_name(), session_id(), time() + (86400 * 30), $params["path"], $params["domain"], $is_secure, $params["httponly"]); // 30 days
     } else {
-        setcookie(session_name(), session_id(), 0, $params["path"], $params["domain"], $params["secure"], $params["httponly"]); // 0 means session expires when browser closes
+        setcookie(session_name(), session_id(), 0, $params["path"], $params["domain"], $is_secure, $params["httponly"]); // 0 means session expires when browser closes
     }
 
     $response_data = [
         'success' => true,
         'message' => 'Login successful!',
-        'redirect' => '../index.php',
+        'redirect' => ACTUAL_WEB_URL . '/index.php',
         'user' => [
             'user_id' => $user['user_id'],
             'username' => $user['username'],
