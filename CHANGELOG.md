@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Project Walkthrough:** Conducted a comprehensive analysis and documentation of the project structure, architecture, and technology stack.
+
+### Added
 - **19 Inline Event Listeners on Dashboard:**
   - `onkeydown` — Ctrl+E keyboard shortcut to open editor, Home key scrolls to top.
   - `onscroll` — Scroll spy shows/hides a floating scroll-to-top button.
