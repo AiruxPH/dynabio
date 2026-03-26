@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Database Architecture Backup**: Embedded a self-contained portable MySQL dump (`database/dynabio.sql`) directly within the project tree to fulfill academic distribution requirements without converting the backend to SQLite3.
+
+### Fixed
+- **Authentication & Privileges**:
+  - Rewrote the global Dashboard privileges check to bind the `Site Owner` identity securely to `SITE_OWNER_EMAIL` rather than strict username constraints, preventing custom usernames from locking the owner out of their own dashboard.
+  - Rewrote the Account Switcher in `login.js` to correctly resolve fallback avatars using absolute Flask `/static/` routing paths instead of legacy relative `../` chains, killing 404 image bugs.
+- **Frontend Infrastructure**:
+  - Forcibly relocated all 20+ script-based inline Event Listeners (e.g. `handleScrollSpy`, `avatarLoadGlow`, `peekBiodata`) from the bottom of the HTML DOM to the document `<head>` in both `dashboard.html` and `public.html`, permanently eliminating initialization Javascript race-condition `ReferenceErrors` on fast interactions.
+  - Exchanged dynamic parent `gap` layout spacing with explicit static `margin-bottom: 2.5rem;` directly on `.module-card` classes inside `public.css` to halt UI collision between modules on both public and authenticated views.
+- **Python Endpoints**:
+  - Transplanted the missing complex GitHub API JSON caching & parsing block directly from the public portfolio endpoint into the authorized `routes/main.py` internal dashboard layout, restoring backend sync functionality.
+  - Built the missing `@user_bp.route('/themes')` endpoint to rectify catastrophic Flask BuildErrors halting the platform when accessing the Themes customization portal.
+### Added
 - **Flask Python Migration (Phase 3 & 4):**
   - Added `routes/main.py` for Dashboard fetching and `routes/user.py` for Bio Editor logics.
   - Converted `dashboard.html`, `editor.html`, `profile.html`, and `themes.html` views into Jinja templates.
