@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Flask Python Migration (Phase 3 & 4):**
+  - Added `routes/main.py` for Dashboard fetching and `routes/user.py` for Bio Editor logics.
+  - Converted `dashboard.html`, `editor.html`, `profile.html`, and `themes.html` views into Jinja templates.
+  - Migrated Theme engine `action_change_theme` and public Portfolio API logic into `routes/public.py`.
+  - Fixed Javascript Fetch targets in `editor.js`, `profile.js`, and `dashboard.js` to hit the new Python endpoints.
+
+### Added
 - **Project Walkthrough:** Conducted a comprehensive analysis and documentation of the project structure, architecture, and technology stack.
 
 ### Added
